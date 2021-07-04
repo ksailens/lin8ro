@@ -23,7 +23,7 @@ export const Select = props => {
   );
 }
 
-Select.protoTypes = {
+Select.propTypes = {
   onChange: PropTypes.func,
   items: PropTypes.array,
   value: PropTypes.any,

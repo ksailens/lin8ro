@@ -1,30 +1,39 @@
 import React from "react";
 import { NumberInput } from "../ui/NumberInput";
 import {Select} from "../ui/Select";
+import {RadioGroup} from "../ui/RadioGroup";
+import FormStore from "../stores/FormStore";
+import {observer} from "mobx-react";
 
-export const Home = () => {
+export const Home = observer(() => {
+  const { width, height, depth, volume, weight, localization, xrayThickness,
+    thickness, massLoss, mobility, dustiness, muddiness, frequency,
+    energy } = FormStore.formParameters;
 
   const renderWeightVolumeDimensions = () => {
     return (
-      <div className="d-flex justify-content-between">
+      <div className="d-flex justify-content-between flex-md-row flex-column">
         <div style={{maxWidth: '450px'}} className="mb-3">
           <label className="form-label">Размер, мм</label>
           <div className="input-group">
             <NumberInput
               label={'Д'}
+              value={width}
               isGrouped={true}
             />
             <NumberInput
               label={'Ш'}
+              value={height}
               isGrouped={true}
             />
             <NumberInput
               label={'T'}
+              value={depth}
               isGrouped={true}
             />
           </div>
         </div>
-        <div className='px-2 fw-bold text-uppercase align-self-center'>
+        <div className='px-2 pt-3 text-uppercase align-self-center'>
           или
         </div>
         <div className="mb-3">
@@ -34,11 +43,13 @@ export const Home = () => {
                 Объем, см<sup><small>3</small></sup>
               </>
             }
+            value={volume}
           />
         </div>
-        <div className="mb-3 ms-2">
+        <div className="mb-3 ms-md-2">
           <NumberInput
             label={'Масса, г'}
+            value={weight}
           />
         </div>
       </div>
@@ -47,19 +58,14 @@ export const Home = () => {
 
   const renderLocalizationSelect = () => {
     const items = [
-      {
-        key: 'Лоханка или верхняя чашечка',
-        value: -1
-      },
-      {
-        key: 'Нижняя или средняя чашечка',
-        value: 1
-      },
+      { key: 'Лоханка или верхняя чашечка', value: -1 },
+      { key: 'Нижняя или средняя чашечка', value: 1 },
     ];
 
     return (
       <div className="mb-3">
         <Select
+          value={localization}
           label={'Локализация'}
           items={items}
         />
@@ -71,11 +77,13 @@ export const Home = () => {
     <>
       <div className="mb-3">
         <NumberInput
+          value={xrayThickness}
           label='Рентгенологическая плотность, HU'
         />
       </div>
       <div className="mb-3">
         <NumberInput
+          value={thickness}
           label={
             <>
               Плотность, г/см<sup><small>3</small></sup>
@@ -94,17 +102,15 @@ export const Home = () => {
         value: i
       })
     }
-
     return (
       <div className="mb-3">
         <Select
+          value={energy}
           label={'Энергия импульсов, Дж'}
           items={items}
         />
       </div>
     );
-
-
   }
 
   const renderFrequencySelect = () => {
@@ -119,7 +125,60 @@ export const Home = () => {
     return (
       <div className="mb-3">
         <Select
+          value={frequency}
+          name={'Frequency'}
           label={'Частота импульсов, Гц'}
+          items={items}
+        />
+      </div>
+    );
+  }
+
+  const renderMuddinessRadio = () => {
+    const items = [
+      { key: 'нет замутнения', value: -1 },
+      { key: 'есть замутнение', value: 1 },
+    ];
+
+    return (
+      <div className="mb-3">
+        <RadioGroup
+          value={muddiness}
+          name={'Muddiness'}
+          label='Видимость'
+          items={items}
+        />
+      </div>
+    );
+  }
+
+  const renderDustinessRadio = () => {
+    const items = [
+      { key: 'непыльный', value: -1 },
+      { key: 'пыльный', value: 1 },
+    ];
+    return (
+      <div className="mb-3">
+        <RadioGroup
+          value={dustiness}
+          name={'Dustiness'}
+          label='Пыльность камня'
+          items={items}
+        />
+      </div>
+    );
+  }
+
+  const renderMobilityRadio = () => {
+    const items = [
+      { key: 'нет', value: -1 },
+      { key: 'есть', value: 1 },
+    ];
+    return (
+      <div className="mb-3">
+        <RadioGroup
+          value={mobility}
+          label='Подвижность камня'
           items={items}
         />
       </div>
@@ -135,19 +194,25 @@ export const Home = () => {
           </div>
           { renderWeightVolumeDimensions() }
 
-          <div className="d-flex justify-content-between">
+          <div className="d-flex justify-content-between flex-md-row flex-column">
             { renderLocalizationSelect() }
             { renderThickness() }
           </div>
           <div className="mb-3">
             <NumberInput
-              label={'Удельная величина потери массы камня на 1 джоуль – γ, мг/Дж.'}
+              value={massLoss}
+              label={'Удельная величина потери массы камня на 1 джоуль – γ, мг/Дж'}
             />
           </div>
         </li>
         <li className="list-group-item">
           <div>
             <label className="fw-bold fs-4 form-label">Особенности операции</label>
+          </div>
+          <div className="d-flex justify-content-between flex-md-row flex-column">
+            { renderMobilityRadio() }
+            { renderDustinessRadio() }
+            { renderMuddinessRadio() }
           </div>
         </li>
         <li className="list-group-item">
@@ -163,4 +228,4 @@ export const Home = () => {
       </div>
     </form>
   )
-}
+});

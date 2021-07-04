@@ -21,8 +21,8 @@ export const NumberInput = props => {
     <>
       {
         isGrouped ?
-          <span className="input-group-text">{label || ''}</span> :
-          <label className="form-label">{label || ''}</label>
+          <span className="input-group-text">{label}</span> :
+          <label className="form-label">{label}</label>
       }
       <input
         type="text"
@@ -34,10 +34,10 @@ export const NumberInput = props => {
   )
 }
 
-NumberInput.protoTypes = {
+NumberInput.propTypes = {
   onChange: PropTypes.func,
   isGrouped: PropTypes.bool,
-  selectedValue: PropTypes.any,
+  value: PropTypes.any,
   label: PropTypes.any,
 }
 
