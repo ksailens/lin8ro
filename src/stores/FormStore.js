@@ -57,7 +57,7 @@ class FormStore {
     if (weight) {
       calcMass = parseFloat(weight);
     } else {
-      calcThickness = xrayThickness ? parseFloat(xrayThickness) : parseFloat(thickness);
+      calcThickness = xrayThickness ? (1.539 + 0.000485 * xrayThickness) : parseFloat(thickness);
       calcVolume = volume ? parseFloat(volume) : (width * height * depth);
       calcMass = calcThickness * calcVolume;
     }
