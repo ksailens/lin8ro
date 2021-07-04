@@ -1,10 +1,15 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import PropTypes from "prop-types";
 
 export const RadioGroup = props => {
   const { items, value, label, onSelect, name } = props;
 
   const [defaultValue, setDefaultValue] = useState(value || '');
+  useEffect(() => {
+    if (value !== defaultValue) {
+      setDefaultValue(value);
+    }
+  }, [value, defaultValue])
 
   const handleChange = ev => {
     const val = ev.target.value;
@@ -24,10 +29,13 @@ export const RadioGroup = props => {
                 type="radio"
                 value={one.value}
                 name={name}
+                id={`${name}${index}`}
                 checked={defaultValue.toString() === one.value.toString()}
                 onChange={handleChange}
               />
-              <label className="form-check-label">
+              <label
+                htmlFor={`${name}${index}`}
+                className="form-check-label">
                 {one.key}
               </label>
             </div>

@@ -1,10 +1,15 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 
 export const Select = props => {
   const { onChange, items, value, label } = props;
-
   const [selectedValue, setValue] = useState(value || '');
+
+  useEffect(() => {
+    if (value !== selectedValue) {
+      setValue(value);
+    }
+  }, [value, selectedValue])
 
   const handleChange = ev => {
     setValue(ev.target.value);

@@ -1,8 +1,14 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 
 export const NumberInput = props => {
-  const { label, value, isGrouped, onChange } = props;
+  const { label, value, isGrouped, onChange, disabled } = props;
+
+  useEffect(() => {
+    if (!value) {
+      setDefaultValue('');
+    }
+  }, [value])
 
   const [defaultValue, setDefaultValue] = useState(value || '');
 
@@ -25,6 +31,7 @@ export const NumberInput = props => {
           <label className="form-label">{label}</label>
       }
       <input
+        disabled={disabled}
         type="text"
         className="form-control text-center"
         onChange={handleChange}
@@ -37,11 +44,13 @@ export const NumberInput = props => {
 NumberInput.propTypes = {
   onChange: PropTypes.func,
   isGrouped: PropTypes.bool,
+  disabled: PropTypes.bool,
   value: PropTypes.any,
   label: PropTypes.any,
 }
 
 NumberInput.defaultProps = {
   label: '',
-  isGrouped: false
+  isGrouped: false,
+  disabled: false
 }
