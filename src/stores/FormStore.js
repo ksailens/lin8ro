@@ -1,16 +1,18 @@
 import { makeAutoObservable } from "mobx";
 import round from 'lodash/round';
+import moment from "moment";
 
 class FormStore {
-  defaultStore = {
+  defaultForm = {
+    fio: '',
+    birthDate: '',
+    operationDate: moment().format('YYYY-MM-DD'),
     width: '',
     height: '',
     depth: '',
     volume: '',
-    weight: '',
     localization: '-1',
     xrayThickness: '',
-    thickness: '',
     massLoss: '',
     mobility: '-1',
     dustiness: '-1',
@@ -19,23 +21,29 @@ class FormStore {
     energy: '0.1'
   };
 
-  formParameters = { ...this.defaultStore };
+  defaultOperationData = {
+    operationDuration: 0,
+    thickness: 0,
+    weight: 0,
+  }
 
-  operationDuration = 0;
+  formParameters = { ...this.defaultForm };
+
+  operationData = { ...this.defaultOperationData }
+
+  cloneInformation;
 
   constructor() {
     makeAutoObservable(this);
   }
 
   get isDisableButton() {
-    const { width, height, depth, volume, weight, xrayThickness,
-      thickness, massLoss } = this.formParameters;
+    const { width, height, depth, volume, xrayThickness,
+      fio, birthDate, operationDate, massLoss } = this.formParameters;
     const hasVolume = (!!width && !!height && !!depth) || !!volume ;
-    const hasThickness = !!xrayThickness || !!thickness;
     const hasMassLoss = !!massLoss;
-    const hasWeight = !!weight || (hasVolume && hasThickness);
 
-    return !hasMassLoss || !hasWeight;
+    return !hasMassLoss || !fio || !birthDate || !operationDate || !xrayThickness || !hasVolume
   }
 
   updateField(fieldName, value) {
@@ -43,29 +51,30 @@ class FormStore {
   }
 
   resetForm() {
-    this.formParameters = { ...this.defaultStore }
-    this.operationDuration = 0;
+    this.formParameters = {...this.defaultForm}
+    this.operationData = {...this.defaultOperationData}
+    this.cloneInformation = null;
   }
 
-  calculateDuration() {
-    const { width, height, depth, volume, weight, xrayThickness,
-      thickness, massLoss, energy, frequency, localization, muddiness, dustiness, mobility } = this.formParameters;
-    let calcMass = 0;
-    let calcVolume = 0;
-    let calcThickness = 0;
 
-    if (weight) {
-      calcMass = parseFloat(weight);
-    } else {
-      calcThickness = xrayThickness ? (1.539 + 0.000485 * xrayThickness) : parseFloat(thickness);
-      calcVolume = volume ? parseFloat(volume) : (width * height * depth);
-      calcMass = calcThickness * calcVolume;
-    }
+  calculateDuration() {
+    const { width, height, depth, volume, xrayThickness,
+      massLoss, energy, frequency, localization, muddiness, dustiness, mobility } = this.formParameters;
+
+    let calcThickness = 1.539 + 0.000485 * xrayThickness;
+    let calcVolume = volume ? parseFloat(volume) : (width * height * depth);
+    let calcMass = calcThickness * calcVolume;
 
     const T2 = calcMass / (massLoss * energy * frequency);
     const T1 = 2.008 + 4.7427 * T2 - 0.0211 * localization + 1.6247 * muddiness - 0.0432 * dustiness + 1.1424 * mobility;
 
-    this.operationDuration = round(T1, 2);
+    this.operationData = {
+      operationDuration: round(T1, 2),
+      thickness: round(calcThickness, 2),
+      weight: round(calcMass, 2)
+    }
+    this.cloneInformation = { ...this.formParameters }
+    this.formParameters = {...this.defaultForm}
   }
 
 }

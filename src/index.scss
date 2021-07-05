@@ -20,6 +20,18 @@ code {
   max-width: 900px;
 }
 
+.leftBlock {
+  max-width: 500px;
+}
+.rightBlock {
+  max-width: 350px;
+}
+
 .mainColor {
   background-color: #063BAE;
+}
+@include media-breakpoint-down(md) {
+  .rightBlock {
+    max-width: 100%;
+  }
 }

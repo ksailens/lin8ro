@@ -5,12 +5,13 @@ import {RadioGroup} from "../ui/RadioGroup";
 import FormStore from "../stores/FormStore";
 import {observer} from "mobx-react";
 import round from 'lodash/round';
+import {Results} from "../components/Results";
 
 export const Home = observer(() => {
-  const { formParameters, operationDuration } = FormStore;
+  const { formParameters } = FormStore;
   const { width, height, depth, volume, weight, localization, xrayThickness,
     thickness, massLoss, mobility, dustiness, muddiness, frequency,
-    energy } = formParameters;
+    energy, fio, birthDate, operationDate } = formParameters;
 
   const handleSubmit = ev => {
     ev.preventDefault();
@@ -28,7 +29,7 @@ export const Home = observer(() => {
 
   const renderWeightVolumeDimensions = () => {
     return (
-      <div className="d-flex justify-content-between flex-md-row flex-column">
+      <div className="d-flex justify-content-between flex-column">
         <div style={{maxWidth: '450px'}} className="mb-3">
           <label className="form-label">Размер, мм</label>
           <div className="input-group">
@@ -55,7 +56,7 @@ export const Home = observer(() => {
             />
           </div>
         </div>
-        <div className='px-2 pt-3 text-uppercase align-self-center'>
+        <div className='px-2 text-uppercase align-self-center'>
           или
         </div>
         <div className="mb-3">
@@ -68,17 +69,6 @@ export const Home = observer(() => {
             value={volume}
             disabled={(!!width && !!height && !!depth) || !!weight}
             onChange={val => handleFieldChange('volume', val)}
-          />
-        </div>
-        <div className='px-2 pt-3 text-uppercase align-self-center'>
-          или
-        </div>
-        <div className="mb-3 ms-md-2">
-          <NumberInput
-            label={'Масса, г'}
-            disabled={!!xrayThickness || !!thickness}
-            value={weight}
-            onChange={val => handleFieldChange('weight', val)}
           />
         </div>
       </div>
@@ -111,21 +101,6 @@ export const Home = observer(() => {
           value={xrayThickness}
           label='Рентгенологическая плотность, HU'
           onChange={val => handleFieldChange('xrayThickness', val)}
-        />
-      </div>
-      <div className='px-2 pt-3 text-uppercase align-self-center'>
-        или
-      </div>
-      <div className="mb-3">
-        <NumberInput
-          disabled={!!weight || !!xrayThickness}
-          value={thickness}
-          onChange={val => handleFieldChange('thickness', val)}
-          label={
-            <>
-              Плотность, г/см<sup><small>3</small></sup>
-            </>
-          }
         />
       </div>
     </>
@@ -229,29 +204,86 @@ export const Home = observer(() => {
   }
 
   const renderResult = () => {
-    if (operationDuration) {
-      return (
-        <div className="alert alert-info mt-3" role="alert">
-          { `Длительность литотрипсии: ${operationDuration} минут(ы)` }
+    return (
+      <ul className="list-group rightBlock mt-md-0 mt-3">
+        <li className="list-group-item">
+          <div>
+            <label className="fw-bold fs-4 form-label">Результаты вычислений</label>
+          </div>
+          <Results />
+        </li>
+      </ul>
+    );
+  }
+
+  const patientData = () => {
+    return (
+      <div>
+        <div className='mb-3'>
+          <label className="form-label">
+            Ф.И.О.
+          </label>
+          <input
+            type="text"
+            className="form-control text-center"
+            onChange={ev => handleFieldChange('fio', ev.target.value)}
+            value={fio}
+          />
         </div>
-      );
-    }
+        <div>
+          <label className="form-label">
+            Дата рождения
+          </label>
+          <input
+            type="date"
+            name='birthDate'
+            className="form-control"
+            value={birthDate}
+            onChange={ev => handleFieldChange('birthDate', ev.target.value)}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  const operationParameters = () => {
+    return (
+      <>
+        { renderFrequencySelect() }
+        { renderEnergySelect() }
+        <div>
+          <label className="form-label">
+            Дата проведения
+          </label>
+          <input
+            type="date"
+            name='operationDate'
+            className="form-control"
+            value={operationDate}
+            onChange={ev => handleFieldChange('operationDate', ev.target.value)}
+          />
+        </div>
+      </>
+    )
   }
 
   return (
-    <>
-      <form className='MainForm border rounded bg-light' onSubmit={handleSubmit}>
+    <div className='MainForm d-flex border rounded bg-light justify-content-between flex-md-row flex-column'>
+      <form className='leftBlock' onSubmit={handleSubmit}>
         <ul className="list-group">
+          <li className="list-group-item pb-3">
+            <div>
+              <label className="fw-bold fs-4 form-label">Данные пациента</label>
+            </div>
+            { patientData() }
+          </li>
           <li className="list-group-item">
             <div>
               <label className="fw-bold fs-4 form-label">Характеристики конкремента</label>
             </div>
             { renderWeightVolumeDimensions() }
-
-            <div className="d-flex justify-content-between flex-md-row flex-column">
-              { renderLocalizationSelect() }
-              { renderThickness() }
-            </div>
+            { renderLocalizationSelect() }
+            { renderThickness() }
             <div className="mb-3">
               <NumberInput
                 value={massLoss}
@@ -274,8 +306,7 @@ export const Home = observer(() => {
             <div>
               <label className="fw-bold fs-4 form-label">Параметры ФКЛТ</label>
             </div>
-            { renderFrequencySelect() }
-            { renderEnergySelect() }
+            { operationParameters() }
           </li>
         </ul>
         <div className="mt-3">
@@ -287,7 +318,6 @@ export const Home = observer(() => {
             Рассчитать
           </button>
           <button
-            // disabled={FormStore.isDisableButton}
             type="reset"
             onClick={handleResetForm}
             className="btn btn-primary ms-2"
@@ -297,6 +327,6 @@ export const Home = observer(() => {
         </div>
       </form>
       { renderResult() }
-    </>
+    </div>
   )
 });
