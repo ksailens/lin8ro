@@ -60,7 +60,7 @@ class FormStore {
 
   calculateDuration() {
     const { width, height, depth, volume, xrayThickness,
-      massLoss, energy, frequency, localization, muddiness, dustiness, mobility } = this.formParameters;
+      massLoss, energy, frequency, localization, muddiness, dustiness, mobility, operationDate, birthDate } = this.formParameters;
 
     let calcThickness = 1.539 + 0.000485 * xrayThickness;
     let calcVolume = volume ? parseFloat(volume) : (width * height * depth);
@@ -74,8 +74,15 @@ class FormStore {
       thickness: round(calcThickness, 2),
       weight: round(calcMass, 2)
     }
-    this.cloneInformation = { ...this.formParameters }
-    DBStore.saveOperation({...this.operationData, ...this.formParameters})
+    this.cloneInformation = {
+      ...this.formParameters,
+      operationDate: moment(operationDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
+      birthDate: moment(birthDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
+    }
+    DBStore.saveOperation({
+      ...this.operationData,
+      ...this.cloneInformation
+    })
       .then(() => {
         this.formParameters = {...this.defaultForm}
       });

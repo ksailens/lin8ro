@@ -1,5 +1,4 @@
 import React from "react";
-import moment from "moment";
 import FormStore from "../stores/FormStore";
 import {observer} from "mobx-react";
 import {Localization, Mobility, Dustiness, Muddiness} from "../constants";
@@ -23,11 +22,11 @@ export const Results = observer(() => {
           </tr>
           <tr>
             <td>Дата рождения</td>
-            <td>{moment(birthDate, 'YYYY-MM-DD').format('DD.MM.YYYY')}</td>
+            <td>{birthDate}</td>
           </tr>
           <tr>
             <td>Дата операции</td>
-            <td>{moment(operationDate, 'YYYY-MM-DD').format('DD.MM.YYYY')}</td>
+            <td>{operationDate}</td>
           </tr>
           <tr>
             <td colSpan='2' className='text-center'>Конкремент</td>

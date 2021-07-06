@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from "react";
 import DBStore from "../stores/DBStore";
-import moment from "moment";
 import {Dustiness, Localization, Mobility, Muddiness} from "../constants";
 import {observer} from "mobx-react";
 
@@ -97,8 +96,8 @@ export const Records = observer(() => {
                 <tr key={one.id}>
                   <td>{ index+1 }</td>
                   <td>{ one.fio }</td>
-                  <td>{ moment(one.birthDate, 'YYYY-MM-DD').format('DD.MM.YYYY') }</td>
-                  <td>{ moment(one.operationDate, 'YYYY-MM-DD').format('DD.MM.YYYY') }</td>
+                  <td>{ one.birthDate }</td>
+                  <td>{ one.operationDate }</td>
                   <td>{ one.volume || '-' }</td>
                   <td>{ one.width && one.height && one.depth ? `${one.width}x${one.height}x${one.depth}` : '-' }</td>
                   <td>{ Localization[one.localization] }</td>
