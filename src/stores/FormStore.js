@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import round from 'lodash/round';
 import moment from "moment";
+import DBStore from "./DBStore";
 
 class FormStore {
   defaultForm = {
@@ -74,7 +75,10 @@ class FormStore {
       weight: round(calcMass, 2)
     }
     this.cloneInformation = { ...this.formParameters }
-    this.formParameters = {...this.defaultForm}
+    DBStore.saveOperation({...this.operationData, ...this.formParameters})
+      .then(() => {
+        this.formParameters = {...this.defaultForm}
+      });
   }
 
 }
