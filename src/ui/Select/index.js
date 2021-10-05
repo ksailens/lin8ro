@@ -21,7 +21,7 @@ export const Select = props => {
       { label && <label className="form-label">{label}</label> }
       <select className={'form-select'} value={selectedValue} onChange={handleChange}>
         {
-          items.map((one, index) => <option key={index} value={one.value}>{one.key}</option>)
+          items.map((one, index) => <option key={index} disabled={!one.value} value={one.value}>{one.key}</option>)
         }
       </select>
     </>

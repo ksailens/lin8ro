@@ -63,7 +63,7 @@ class FormStore {
       massLoss, energy, frequency, localization, muddiness, dustiness, mobility, operationDate, birthDate } = this.formParameters;
 
     let calcThickness = 1.539 + 0.000485 * xrayThickness;
-    let calcVolume = volume ? parseFloat(volume) : (width * height * depth);
+    let calcVolume = volume ? parseFloat(volume) : (width * height * depth)/1000;
     let calcMass = calcThickness * calcVolume;
 
     const T2 = calcMass / (massLoss * energy * frequency);
@@ -72,7 +72,7 @@ class FormStore {
     this.operationData = {
       operationDuration: round(T1, 2),
       thickness: round(calcThickness, 2),
-      weight: round(calcMass, 2)
+      weight: round(calcMass, 3)
     }
     this.cloneInformation = {
       ...this.formParameters,

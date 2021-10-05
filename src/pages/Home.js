@@ -79,6 +79,9 @@ export const Home = observer(() => {
     const items = [
       { key: 'Лоханка или верхняя чашечка', value: '-1' },
       { key: 'Нижняя или средняя чашечка', value: '1' },
+      { key: 'Верхняя треть мочеточника', value: '' },
+      { key: 'Средняя треть мочеточника', value: '' },
+      { key: 'Нижняя треть мочеточника', value: '' },
     ];
 
     return (
@@ -268,8 +271,8 @@ export const Home = observer(() => {
   }
 
   return (
-    <div className='MainForm d-flex border rounded bg-light justify-content-between flex-md-row flex-column'>
-      <form className='leftBlock' onSubmit={handleSubmit}>
+    <div className='MainForm d-flex border rounded bg-light justify-content-between flex-column'>
+      <form className='leftBlock pb-3' onSubmit={handleSubmit}>
         <ul className="list-group">
           <li className="list-group-item pb-3">
             <div>
@@ -304,7 +307,7 @@ export const Home = observer(() => {
           </li>
           <li className="list-group-item">
             <div>
-              <label className="fw-bold fs-4 form-label">Параметры ФКЛТ</label>
+              <label className="fw-bold fs-4 form-label">Параметры литотриптера</label>
             </div>
             { operationParameters() }
           </li>
