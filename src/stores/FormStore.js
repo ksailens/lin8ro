@@ -1,7 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import round from 'lodash/round';
 import moment from "moment";
-import DBStore from "./DBStore";
 
 class FormStore {
   defaultForm = {
@@ -34,7 +33,8 @@ class FormStore {
 
   cloneInformation;
 
-  constructor() {
+  constructor(store) {
+    this.store = store;
     makeAutoObservable(this);
   }
 
@@ -59,6 +59,8 @@ class FormStore {
 
 
   calculateDuration() {
+    const { coefficientStore, dbStore } = this.store;
+    const { currentCoefficients: { q1, q2, q3, q4, q5, q6 } } = coefficientStore;
     const { width, height, depth, volume, xrayThickness,
       massLoss, energy, frequency, localization, muddiness, dustiness, mobility, operationDate, birthDate } = this.formParameters;
 
@@ -67,7 +69,7 @@ class FormStore {
     let calcMass = calcThickness * calcVolume;
 
     const T2 = calcMass / (massLoss * energy * frequency);
-    const T1 = 2.008 + 4.7427 * T2 - 0.0211 * localization + 1.6247 * muddiness - 0.0432 * dustiness + 1.1424 * mobility;
+    const T1 = q1 + q2 * T2 + q3 * localization + q4 * muddiness + q5 * dustiness + q6 * mobility;
 
     this.operationData = {
       operationDuration: round(T1, 2),
@@ -79,7 +81,7 @@ class FormStore {
       operationDate: moment(operationDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
       birthDate: moment(birthDate, 'YYYY-MM-DD').format('DD.MM.YYYY'),
     }
-    DBStore.saveOperation({
+    dbStore.saveOperation({
       ...this.operationData,
       ...this.cloneInformation
     })
@@ -90,4 +92,4 @@ class FormStore {
 
 }
 
-export default new FormStore()
+export default FormStore;

@@ -2,30 +2,35 @@ import React from "react";
 import { NumberInput } from "../ui/NumberInput";
 import {Select} from "../ui/Select";
 import {RadioGroup} from "../ui/RadioGroup";
-import FormStore from "../stores/FormStore";
 import {observer} from "mobx-react";
 import round from 'lodash/round';
 import {Results} from "../components/Results";
+import { useHistory } from 'react-router-dom';
+import { useStores } from "../stores";
 
 export const Home = observer(() => {
-  const { formParameters } = FormStore;
+  const { formStore } = useStores();
+  const { formParameters } = formStore;
+  const history = useHistory();
   const { width, height, depth, volume, weight, localization, xrayThickness,
     thickness, massLoss, mobility, dustiness, muddiness, frequency,
     energy, fio, birthDate, operationDate } = formParameters;
 
   const handleSubmit = ev => {
     ev.preventDefault();
-    FormStore.calculateDuration();
+    formStore.calculateDuration();
   }
 
   const handleResetForm = ev => {
     ev.preventDefault();
-    FormStore.resetForm();
+    formStore.resetForm();
   }
 
   const handleFieldChange = (fieldName, value) => {
-    FormStore.updateField(fieldName, value)
+    formStore.updateField(fieldName, value)
   }
+
+  const handleGoToSettings = () => history.push('/model_settings');
 
   const renderWeightVolumeDimensions = () => {
     return (
@@ -314,9 +319,16 @@ export const Home = observer(() => {
         </ul>
         <div className="mt-3">
           <button
-            disabled={FormStore.isDisableButton}
-            type="submit"
+            type="button"
             className="btn btn-primary"
+            onClick={handleGoToSettings}
+          >
+            Настройка модели
+          </button>
+          <button
+            disabled={formStore.isDisableButton}
+            type="submit"
+            className="btn btn-primary ms-2"
           >
             Рассчитать
           </button>

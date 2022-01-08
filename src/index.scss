@@ -30,6 +30,17 @@ code {
 .mainColor {
   background-color: #063BAE;
 }
+.CoefficientInput {
+  display: flex;
+  align-items: baseline;
+
+  input {
+    width: unset;
+  }
+}
+.form-control.is-invalid {
+  padding-right: 0.75rem;
+}
 @include media-breakpoint-down(md) {
   .rightBlock {
     max-width: 100%;

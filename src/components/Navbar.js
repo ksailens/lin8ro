@@ -24,6 +24,13 @@ export const Navbar = () => {
           <li className="nav-item">
             <NavLink
               className="nav-link"
+              to="/model_settings">
+              Настройка модели
+            </NavLink>
+          </li>
+          <li className="nav-item">
+            <NavLink
+              className="nav-link"
               to="/about">
               Информация
             </NavLink>

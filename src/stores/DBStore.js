@@ -36,4 +36,4 @@ class DBStore {
 
 }
 
-export default new DBStore()
+export default DBStore;

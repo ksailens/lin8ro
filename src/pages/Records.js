@@ -1,23 +1,19 @@
-import React, {useEffect, useState} from "react";
-import DBStore from "../stores/DBStore";
+import React, {useEffect, useState, useCallback} from "react";
+import { useStores } from "../stores";
 import {Dustiness, Localization, Mobility, Muddiness} from "../constants";
 import {observer} from "mobx-react";
 
 export const Records = observer(() => {
-  const { data } = DBStore;
+  const { dbStore } = useStores();
+  const { data } = dbStore;
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(false);
-
-  useEffect(() => {
-    getData();
-  }, []);
-
-  function getData() {
+  const getData = useCallback(() => {
     setPending(true);
     setError(false);
-    DBStore.getOperationData()
+    dbStore.getOperationData()
       .then(data => {
-        DBStore.setData(data.data);
+        dbStore.setData(data.data);
       })
       .catch(() => {
         setError(true);
@@ -25,14 +21,18 @@ export const Records = observer(() => {
       .finally(() => {
         setPending(false);
       })
-  }
+  }, [dbStore]);
+
+  useEffect(() => {
+    getData();
+  }, [getData]);
 
   const handleGetData = () => {
     getData();
   }
 
   const handleDeleteNote = id => {
-    DBStore.deleteOperation(id);
+    dbStore.deleteOperation(id);
   }
 
   const renderLoader = () => {
