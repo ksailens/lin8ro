@@ -1,15 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { observer } from "mobx-react";
 import { NumberInput } from "../ui/NumberInput";
 import { useStores } from "../stores";
+import forEach from 'lodash/forEach';
+import isEmpty from 'lodash/isEmpty';
 
 export const ModelSettings = observer(() => {
-  const { coefficientStore: { currentCoefficients }, coefficientStore } = useStores();
+  const { coefficientStore: { currentCoefficients, previousCoefficients }, coefficientStore } = useStores();
   const [coefficients, setCoefficients] = useState({...currentCoefficients});
 
   useEffect(() => {
     setCoefficients({...currentCoefficients});
   }, [currentCoefficients])
+
+  useEffect(() => {
+    return () => coefficientStore.stopStore();
+  }, []);
+
+  const isEqualsObj = useMemo(
+    () => {
+      const copyObj = {...coefficients};
+      forEach(copyObj, (val, key) => copyObj[key] = parseFloat(val));
+      return JSON.stringify(currentCoefficients) === JSON.stringify(copyObj);
+    },
+    [coefficients, currentCoefficients]);
 
   const handleChangeValue = (index, val) => {
     const prevCoeff = {...coefficients};
@@ -17,8 +31,16 @@ export const ModelSettings = observer(() => {
     setCoefficients(prevCoeff);
   }
 
+  function handleSaveCoefficients() {
+    coefficientStore.setCurrentCoefficients(coefficients);
+  }
+
   function handleReset() {
     coefficientStore.resetCurrentCoefficients();
+  }
+
+  function handleResetPrevious() {
+    coefficientStore.resetPreviousCoefficients();
   }
 
   const renderQ1 = () => {
@@ -111,6 +133,34 @@ export const ModelSettings = observer(() => {
     );
   }
 
+  const renderPreviousValues = () => {
+    if (isEmpty(previousCoefficients)) {
+      return null;
+    }
+
+    return (
+      <>
+        <div>
+          <i>предыдущие значение коэффициентов:</i> <br/>
+          Q<sub>1</sub>: {previousCoefficients.q1},
+          Q<sub>2</sub>: {previousCoefficients.q2},
+          Q<sub>3</sub>: {previousCoefficients.q3},
+          <br/>
+          Q<sub>4</sub>: {previousCoefficients.q4},
+          Q<sub>5</sub>: {previousCoefficients.q5},
+          Q<sub>6</sub>: {previousCoefficients.q6}
+        </div>
+        <button
+          type="submit"
+          className="btn btn-secondary"
+          onClick={handleResetPrevious}
+        >
+          Скрыть
+        </button>
+      </>
+    )
+  }
+
   return (
     <div className="p-5 mb-4 bg-light rounded-3">
       <div className="container">
@@ -134,22 +184,29 @@ export const ModelSettings = observer(() => {
           { renderQ5() }
           { renderQ6() }
         </div>
+        { renderPreviousValues() }
         <div>
           <p className="lead m-0">Модель:</p>
           <p className="ps-4">
             T = Q<sub>1</sub> + Q<sub>2</sub>*X<sub>1</sub> + Q<sub>3</sub>*X<sub>2</sub> + Q<sub>4</sub>*X<sub>3</sub> + Q<sub>5</sub>*X<sub>4</sub> + Q<sub>6</sub>*X<sub>5</sub>
           </p>
         </div>
+        {!isEqualsObj && <div className="alert alert-primary" role="alert">
+          Коэффициенты были изменены! Чтобы применить изменения нажмите кнопку "Сохранить"
+        </div>}
         <div className="mt-3">
           <button
             type="submit"
             className="btn btn-primary"
+            disabled={isEqualsObj}
+            onClick={handleSaveCoefficients}
           >
             Сохранить
           </button>
           <button
             type="reset"
             className="btn btn-primary ms-2"
+            disabled={!coefficientStore.isCoefficientsChanged}
             onClick={handleReset}
           >
             Сбросить

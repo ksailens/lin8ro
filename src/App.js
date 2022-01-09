@@ -7,22 +7,48 @@ import { Records } from "./pages/Records";
 import { Navbar } from "./components/Navbar";
 import { Header } from "./components/Header";
 import { ModelSettings } from "./pages/ModelSettings";
+import { observer } from "mobx-react";
+import { useStores } from "./stores";
+import { isHydrated } from 'mobx-persist-store';
 
-function App() {
+const App = observer(() => {
+  const { coefficientStore } = useStores();
+
+  const allStoreAreSynchronized = () => {
+    return Object.values({ coefficientStore }).every((store => {
+      return isHydrated(store)
+    }))
+  }
+
+  const renderContent = () => {
+    if (!allStoreAreSynchronized()) {
+      return (
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border" role="status">
+            <span className="visually-hidden">Загрузка...</span>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <Switch>
+        <Route path={'/'} exact component={Home} />
+        <Route path={'/records'} component={Records} />
+        <Route path={'/about'} component={About} />
+        <Route path={'/model_settings'} component={ModelSettings} />
+      </Switch>
+    );
+  }
+
   return (
     <BrowserRouter>
       <Header/>
       <Navbar/>
       <div className="container pt-4">
-        <Switch>
-          <Route path={'/'} exact component={Home} />
-          <Route path={'/records'} component={Records} />
-          <Route path={'/about'} component={About} />
-          <Route path={'/model_settings'} component={ModelSettings} />
-        </Switch>
+        { renderContent() }
       </div>
     </BrowserRouter>
   );
-}
+});
 
 export default App;

@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
-import { makePersistable } from 'mobx-persist-store';
+import { makePersistable, isPersisting, isHydrated, stopPersisting } from 'mobx-persist-store';
+import forEach from "lodash/forEach";
 
 const DEFAULT_COEFFICIENTS = {
   q1: 2.008,
@@ -25,13 +26,43 @@ class CoefficientStore {
     );
   }
 
+  get isHydrated() {
+    return isHydrated(this);
+  }
+
+  get isPersisting() {
+    return isPersisting(this);
+  }
+
+  get isCoefficientsChanged() {
+    return JSON.stringify(DEFAULT_COEFFICIENTS) !== JSON.stringify(this.currentCoefficients)
+  }
+
+  stopStore() {
+    stopPersisting(this);
+  }
+
   setCurrentCoefficients(data) {
+
+    const copyObj = {...data};
+    forEach(copyObj, (val, key) => {
+      let newVal = parseFloat(val);
+      if (newVal === -0 || Number.isNaN(newVal)) {
+        newVal = 0;
+      }
+      copyObj[key] = newVal;
+    });
+
     this.previousCoefficients = { ...this.currentCoefficients };
-    this.currentCoefficients = data;
+    this.currentCoefficients = copyObj;
   }
 
   resetCurrentCoefficients() {
     this.currentCoefficients = { ...DEFAULT_COEFFICIENTS };
+  }
+
+  resetPreviousCoefficients() {
+    this.previousCoefficients = {};
   }
 
 }

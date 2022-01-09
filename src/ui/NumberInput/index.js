@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 export const NumberInput = props => {
   const { label, value, isGrouped, onChange, disabled, isNegative, isError } = props;
   useEffect(() => {
-    if (!value) {
+    if (!value && value !== 0) {
       setDefaultValue('');
     } else if (/^-?[0-9]\d*\.?\d*$/.test(value) || /^\d*\.?\d*$/.test(value)) {
       setDefaultValue(value)
