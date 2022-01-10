@@ -164,7 +164,7 @@ export const ModelSettings = observer(() => {
   return (
     <div className="p-5 mb-4 bg-light rounded-3">
       <div className="container">
-        <p className="h4 fw-normal pb-3">Редактирование модели прогнозирования времени продолжительности лазерной литотрипсии</p>
+        <p className="h4 fw-normal pb-3">Редактирование модели прогнозирования длительности лазерной литотрипсии</p>
         <div>
           <p className="lead m-0">Аргументы:</p>
           <p className="ps-4">
