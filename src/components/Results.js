@@ -1,10 +1,11 @@
 import React from "react";
-import FormStore from "../stores/FormStore";
 import {observer} from "mobx-react";
+import { useStores } from "../stores";
 // import {Localization, Mobility, Dustiness, Muddiness} from "../constants";
 
 export const Results = observer(() => {
-  const { cloneInformation, operationData } = FormStore;
+  const { formStore } = useStores();
+  const { cloneInformation, operationData } = formStore;
   if (cloneInformation) {
     // const { width, height, depth, volume, localization, xrayThickness,
     //   massLoss, mobility, dustiness, muddiness, frequency,
