@@ -319,16 +319,9 @@ export const Home = observer(() => {
         </ul>
         <div className="mt-3">
           <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleGoToSettings}
-          >
-            Настройка модели
-          </button>
-          <button
             disabled={formStore.isDisableButton}
             type="submit"
-            className="btn btn-primary ms-2"
+            className="btn btn-primary"
           >
             Рассчитать
           </button>
@@ -338,6 +331,13 @@ export const Home = observer(() => {
             className="btn btn-primary ms-2"
           >
             Очистить форму
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary ms-2"
+            onClick={handleGoToSettings}
+          >
+            Настройка модели
           </button>
         </div>
       </form>

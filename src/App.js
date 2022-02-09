@@ -10,6 +10,7 @@ import { ModelSettings } from "./pages/ModelSettings";
 import { observer } from "mobx-react";
 import { useStores } from "./stores";
 import { isHydrated } from 'mobx-persist-store';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = observer(() => {
   const { coefficientStore } = useStores();

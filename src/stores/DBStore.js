@@ -14,6 +14,10 @@ class DBStore {
     return await axios.get(`${URL}/notes.json`);
   }
 
+  async editOperation(id, data) {
+    return await axios.patch(`${URL}/notes/${id}.json`, data);
+  }
+
   async saveOperation(data) {
     await axios.post(`${URL}/notes.json`, data);
   }
