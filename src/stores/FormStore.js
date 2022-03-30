@@ -72,7 +72,7 @@ class FormStore {
     const T1 = q1 + q2 * T2 + q3 * localization + q4 * muddiness + q5 * dustiness + q6 * mobility;
 
     this.operationData = {
-      operationDuration: round(T1, 2),
+      operationDuration: T1 > 0 ? round(T1, 2) : 0.1,
       thickness: round(calcThickness, 2),
       weight: round(calcMass, 3)
     }
