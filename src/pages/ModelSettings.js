@@ -44,7 +44,7 @@ export const ModelSettings = observer(() => {
         <p className="h4 fw-normal pb-3">Редактирование модели прогнозирования длительности лазерной литотрипсии</p>
         <Accordion defaultActiveKey={0} alwaysOpen>
           { content.map((item, index) => (
-            <Accordion.Item eventKey={index}>
+            <Accordion.Item eventKey={index} key={index}>
               <Accordion.Header>{item.title}</Accordion.Header>
               <Accordion.Body>
                 { React.createElement(item.element) }

@@ -6,22 +6,23 @@ import forEach from 'lodash/forEach';
 import isEmpty from 'lodash/isEmpty';
 import { Systems } from "../../constants";
 
-export const UreterTop = observer(() => {
+export const UreterMiddle = observer(() => {
   const { coefficientStore: { currentCoefficients, previousCoefficients }, coefficientStore } = useStores();
   const [coefficients, setCoefficients] = useState({...currentCoefficients});
-  const previousCoefficientsByType = previousCoefficients[Systems.ureterTop];
+  const previousCoefficientsByType = previousCoefficients[Systems.ureterMiddle];
+  const currentCoefficientsByType = currentCoefficients[Systems.ureterMiddle];
 
   useEffect(() => {
-    setCoefficients({...currentCoefficients[Systems.ureterTop]});
-  }, [currentCoefficients])
+    setCoefficients({...currentCoefficientsByType});
+  }, [currentCoefficientsByType])
 
   const isEqualsObj = useMemo(
     () => {
       const copyObj = {...coefficients};
       forEach(copyObj, (val, key) => copyObj[key] = parseFloat(val));
-      return JSON.stringify(currentCoefficients[Systems.ureterTop]) === JSON.stringify(copyObj);
+      return JSON.stringify(currentCoefficientsByType) === JSON.stringify(copyObj);
     },
-    [coefficients, currentCoefficients]);
+    [coefficients, currentCoefficientsByType]);
 
   const handleChangeValue = (index, val) => {
     const prevCoeff = {...coefficients};
@@ -30,15 +31,15 @@ export const UreterTop = observer(() => {
   }
 
   function handleSaveCoefficients() {
-    coefficientStore.setCurrentCoefficients(coefficients, Systems.ureterTop);
+    coefficientStore.setCurrentCoefficients(coefficients, Systems.ureterMiddle);
   }
 
   function handleReset() {
-    coefficientStore.resetCurrentCoefficients(Systems.ureterTop);
+    coefficientStore.resetCurrentCoefficients(Systems.ureterMiddle);
   }
 
   function handleResetPrevious() {
-    coefficientStore.resetPreviousCoefficients(Systems.ureterTop);
+    coefficientStore.resetPreviousCoefficients(Systems.ureterMiddle);
   }
 
   const renderQ1 = () => {
@@ -202,7 +203,7 @@ export const UreterTop = observer(() => {
         <button
           type="reset"
           className="btn btn-primary ms-2"
-          disabled={!coefficientStore.isCoefficientsChanged[Systems.ureterTop]}
+          disabled={!coefficientStore.isCoefficientsChanged[Systems.ureterMiddle]}
           onClick={handleReset}
         >
           Сбросить

@@ -78,7 +78,7 @@ class CoefficientStore {
   get isCoefficientsChanged() {
     const equals = {};
     forEach(Systems, one => {
-      equals.one = JSON.stringify(DEFAULT_COEFFICIENTS[one]) !== JSON.stringify(this.currentCoefficients[one])
+      equals[one] = JSON.stringify(DEFAULT_COEFFICIENTS[one]) !== JSON.stringify(this.currentCoefficients[one])
     })
     return equals;
   }

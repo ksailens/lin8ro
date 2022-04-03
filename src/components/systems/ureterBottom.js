@@ -10,18 +10,19 @@ export const UreterBottom = observer(() => {
   const { coefficientStore: { currentCoefficients, previousCoefficients }, coefficientStore } = useStores();
   const [coefficients, setCoefficients] = useState({...currentCoefficients});
   const previousCoefficientsByType = previousCoefficients[Systems.ureterBottom];
+  const currentCoefficientsByType = currentCoefficients[Systems.ureterBottom];
 
   useEffect(() => {
-    setCoefficients({...currentCoefficients[Systems.ureterBottom]});
-  }, [currentCoefficients])
+    setCoefficients({...currentCoefficientsByType});
+  }, [currentCoefficientsByType])
 
   const isEqualsObj = useMemo(
     () => {
       const copyObj = {...coefficients};
       forEach(copyObj, (val, key) => copyObj[key] = parseFloat(val));
-      return JSON.stringify(currentCoefficients[Systems.ureterBottom]) === JSON.stringify(copyObj);
+      return JSON.stringify(currentCoefficientsByType) === JSON.stringify(copyObj);
     },
-    [coefficients, currentCoefficients]);
+    [coefficients, currentCoefficientsByType]);
 
   const handleChangeValue = (index, val) => {
     const prevCoeff = {...coefficients};

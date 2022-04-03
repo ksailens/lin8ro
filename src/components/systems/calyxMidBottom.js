@@ -10,18 +10,19 @@ export const CalyxMidBottom = observer(() => {
   const { coefficientStore: { currentCoefficients, previousCoefficients }, coefficientStore } = useStores();
   const [coefficients, setCoefficients] = useState({...currentCoefficients});
   const previousCoefficientsByType = previousCoefficients[Systems.calyxMidBottom];
+  const currentCoefficientsByType = currentCoefficients[Systems.calyxMidBottom];
 
   useEffect(() => {
-    setCoefficients({...currentCoefficients[Systems.calyxMidBottom]});
-  }, [currentCoefficients])
+    setCoefficients({...currentCoefficientsByType});
+  }, [currentCoefficientsByType])
 
   const isEqualsObj = useMemo(
     () => {
       const copyObj = {...coefficients};
       forEach(copyObj, (val, key) => copyObj[key] = parseFloat(val));
-      return JSON.stringify(currentCoefficients[Systems.calyxMidBottom]) === JSON.stringify(copyObj);
+      return JSON.stringify(currentCoefficientsByType) === JSON.stringify(copyObj);
     },
-    [coefficients, currentCoefficients]);
+    [coefficients, currentCoefficientsByType]);
 
   const handleChangeValue = (index, val) => {
     const prevCoeff = {...coefficients};

@@ -10,18 +10,19 @@ export const Pelvis = observer(() => {
   const { coefficientStore: { currentCoefficients, previousCoefficients }, coefficientStore } = useStores();
   const [coefficients, setCoefficients] = useState({...currentCoefficients});
   const previousCoefficientsByType = previousCoefficients[Systems.pelvis];
+  const currentCoefficientsByType = currentCoefficients[Systems.pelvis];
 
   useEffect(() => {
-    setCoefficients({...currentCoefficients[Systems.pelvis]});
-  }, [currentCoefficients])
+    setCoefficients({...currentCoefficientsByType});
+  }, [currentCoefficientsByType])
 
   const isEqualsObj = useMemo(
     () => {
       const copyObj = {...coefficients};
       forEach(copyObj, (val, key) => copyObj[key] = parseFloat(val));
-      return JSON.stringify(currentCoefficients[Systems.pelvis]) === JSON.stringify(copyObj);
+      return JSON.stringify(currentCoefficientsByType) === JSON.stringify(copyObj);
     },
-    [coefficients, currentCoefficients]);
+    [coefficients, currentCoefficientsByType]);
 
   const handleChangeValue = (index, val) => {
     const prevCoeff = {...coefficients};
