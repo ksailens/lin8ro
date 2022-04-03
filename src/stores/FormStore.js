@@ -1,6 +1,7 @@
 import { makeAutoObservable } from "mobx";
 import round from 'lodash/round';
 import moment from "moment";
+import { Systems } from "../constants";
 
 class FormStore {
   defaultForm = {
@@ -11,7 +12,7 @@ class FormStore {
     height: '',
     depth: '',
     volume: '',
-    localization: '-1',
+    localization: Systems.pelvis,
     xrayThickness: '',
     massLoss: '',
     mobility: '-1',
@@ -60,16 +61,25 @@ class FormStore {
 
   calculateDuration() {
     const { coefficientStore, dbStore } = this.store;
-    const { currentCoefficients: { q1, q2, q3, q4, q5, q6 } } = coefficientStore;
     const { width, height, depth, volume, xrayThickness,
       massLoss, energy, frequency, localization, muddiness, dustiness, mobility, operationDate, birthDate } = this.formParameters;
+    const { currentCoefficients } = coefficientStore;
 
     let calcThickness = 1.539 + 0.000485 * xrayThickness;
     let calcVolume = volume ? parseFloat(volume) : (width * height * depth)/1000;
     let calcMass = calcThickness * calcVolume;
+    const localizationValue = [Systems.ureterMiddle, Systems.ureterTop, Systems.ureterBottom].includes(localization) ? -1 : 1;
 
+    let T1;
     const T2 = calcMass / (massLoss * energy * frequency);
-    const T1 = q1 + q2 * T2 + q3 * localization + q4 * muddiness + q5 * dustiness + q6 * mobility;
+    if ([Systems.ureterMiddle, Systems.ureterTop, Systems.ureterBottom].includes(localization)) {
+      const coefficients = currentCoefficients[localization];
+      T1 = coefficients.q1 + coefficients.q2 * T2 + coefficients.q3 * localizationValue + coefficients.q4 * muddiness + coefficients.q5 * dustiness + coefficients.q6 * mobility;
+
+    } else {
+      const coefficients = currentCoefficients[localization];
+      T1 = coefficients.q1 + coefficients.q2 * T2 + coefficients.q3 * localizationValue + coefficients.q4 * muddiness + coefficients.q5 * dustiness;
+    }
 
     this.operationData = {
       operationDuration: T1 > 0 ? round(T1, 2) : 0.1,

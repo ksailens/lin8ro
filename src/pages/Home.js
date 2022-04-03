@@ -7,6 +7,7 @@ import round from 'lodash/round';
 import {Results} from "../components/Results";
 import { useHistory } from 'react-router-dom';
 import { useStores } from "../stores";
+import { Systems } from "../constants";
 
 export const Home = observer(() => {
   const { formStore } = useStores();
@@ -82,11 +83,12 @@ export const Home = observer(() => {
 
   const renderLocalizationSelect = () => {
     const items = [
-      { key: 'Лоханка или верхняя чашечка', value: '-1' },
-      { key: 'Нижняя или средняя чашечка', value: '1' },
-      { key: 'Верхняя треть мочеточника', value: '' },
-      { key: 'Средняя треть мочеточника', value: '' },
-      { key: 'Нижняя треть мочеточника', value: '' },
+      { key: 'Лоханка', value: Systems.pelvis },
+      { key: 'Верхняя чашечка', value: Systems.calyxTop },
+      { key: 'Нижняя или средняя чашечка', value: Systems.calyxMidBottom },
+      { key: 'Верхняя треть мочеточника', value: Systems.ureterTop },
+      { key: 'Средняя треть мочеточника', value: Systems.ureterMiddle },
+      { key: 'Нижняя треть мочеточника', value: Systems.ureterBottom },
     ];
 
     return (
@@ -107,6 +109,7 @@ export const Home = observer(() => {
         <NumberInput
           disabled={!!weight || !!thickness}
           value={xrayThickness}
+          fixedValue={3000}
           label='Рентгенологическая плотность, HU'
           onChange={val => handleFieldChange('xrayThickness', val)}
         />

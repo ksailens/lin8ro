@@ -14,6 +14,19 @@ export const Muddiness = {
 }
 
 export const Localization = {
-  '-1': 'лоханка или верхняя чашка',
-  '1': 'нижняя или средняя чашка'
+  ureterTop: 'верхняя треть мочеточника',
+  ureterMiddle: 'средний отдел мочеточника',
+  ureterBottom: 'нижняя треть мочеточника',
+  calyxTop: 'верхняя чашка',
+  calyxMidBottom: 'нижняя или средняя чашка',
+  pelvis: 'лоханка',
+}
+
+export const Systems = {
+  ureterTop: 'ureterTop',
+  ureterMiddle: 'ureterMiddle',
+  ureterBottom: 'ureterBottom',
+  calyxTop: 'calyxTop',
+  calyxMidBottom: 'calyxMidBottom',
+  pelvis: 'pelvis',
 }

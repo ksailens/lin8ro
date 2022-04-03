@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 
 export const NumberInput = props => {
-  const { label, value, isGrouped, onChange, disabled, isNegative, isError } = props;
+  const { label, value, isGrouped, onChange, disabled, isNegative, isError, fixedValue } = props;
   useEffect(() => {
     if (!value && value !== 0) {
       setDefaultValue('');
@@ -13,7 +13,9 @@ export const NumberInput = props => {
 
   const [defaultValue, setDefaultValue] = useState(value || '');
   const handleChange = ev => {
-    const value = ev.target.value;
+    const initialValue = ev.target.value;
+    const value = fixedValue && initialValue > fixedValue ? fixedValue : initialValue;
+
     if (isNegative) {
       if (value === '' || value === '-') {
         setDefaultValue(value);
@@ -59,6 +61,7 @@ NumberInput.propTypes = {
   disabled: PropTypes.bool,
   value: PropTypes.any,
   label: PropTypes.any,
+  fixedValue: PropTypes.number,
 }
 
 NumberInput.defaultProps = {

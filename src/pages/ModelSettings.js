@@ -1,218 +1,57 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 import { observer } from "mobx-react";
-import { NumberInput } from "../ui/NumberInput";
+import { Accordion } from "react-bootstrap";
+import { Pelvis, UreterBottom, UreterMiddle, UreterTop, CalyxTop, CalyxMidBottom } from '../components/systems'
 import { useStores } from "../stores";
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
 
 export const ModelSettings = observer(() => {
-  const { coefficientStore: { currentCoefficients, previousCoefficients }, coefficientStore } = useStores();
-  const [coefficients, setCoefficients] = useState({...currentCoefficients});
-
-  useEffect(() => {
-    setCoefficients({...currentCoefficients});
-  }, [currentCoefficients])
+  const { coefficientStore } = useStores();
 
   useEffect(() => {
     return () => coefficientStore.stopStore();
-  }, []);
+  }, [coefficientStore]);
 
-  const isEqualsObj = useMemo(
-    () => {
-      const copyObj = {...coefficients};
-      forEach(copyObj, (val, key) => copyObj[key] = parseFloat(val));
-      return JSON.stringify(currentCoefficients) === JSON.stringify(copyObj);
+  const content = [
+    {
+      title: 'при локализации конкремента в лоханке',
+      element: Pelvis
     },
-    [coefficients, currentCoefficients]);
-
-  const handleChangeValue = (index, val) => {
-    const prevCoeff = {...coefficients};
-    prevCoeff[index] = val;
-    setCoefficients(prevCoeff);
-  }
-
-  function handleSaveCoefficients() {
-    coefficientStore.setCurrentCoefficients(coefficients);
-  }
-
-  function handleReset() {
-    coefficientStore.resetCurrentCoefficients();
-  }
-
-  function handleResetPrevious() {
-    coefficientStore.resetPreviousCoefficients();
-  }
-
-  const renderQ1 = () => {
-    return (
-      <div className={'CoefficientInput m-1'}>
-        <NumberInput
-          label={<>Q<sub>1</sub></>}
-          isNegative={true}
-          value={coefficients.q1}
-          isError={coefficients.q1 === '-'}
-          isGrouped={true}
-          onChange={val => handleChangeValue('q1', val)}
-        />
-      </div>
-    );
-  }
-
-  const renderQ2 = () => {
-    return (
-      <div className={'CoefficientInput m-1'}>
-        <NumberInput
-          label={<>Q<sub>2</sub></>}
-          isNegative={true}
-          value={coefficients.q2}
-          isError={coefficients.q2 === '-'}
-          isGrouped={true}
-          onChange={val => handleChangeValue('q2', val)}
-        />
-      </div>
-    );
-  }
-
-  const renderQ3 = () => {
-    return (
-      <div className={'CoefficientInput m-1'}>
-        <NumberInput
-          label={<>Q<sub>3</sub></>}
-          isNegative={true}
-          value={coefficients.q3}
-          isError={coefficients.q3 === '-'}
-          isGrouped={true}
-          onChange={val => handleChangeValue('q3', val)}
-        />
-      </div>
-    );
-  }
-
-  const renderQ4 = () => {
-    return (
-      <div className={'CoefficientInput m-1'}>
-        <NumberInput
-          label={<>Q<sub>4</sub></>}
-          isNegative={true}
-          value={coefficients.q4}
-          isError={coefficients.q4 === '-'}
-          isGrouped={true}
-          onChange={val => handleChangeValue('q4', val)}
-        />
-      </div>
-    );
-  }
-
-  const renderQ5 = () => {
-    return (
-      <div className={'CoefficientInput m-1'}>
-        <NumberInput
-          label={<>Q<sub>5</sub></>}
-          isNegative={true}
-          value={coefficients.q5}
-          isError={coefficients.q5 === '-'}
-          isGrouped={true}
-          onChange={val => handleChangeValue('q5', val)}
-        />
-      </div>
-    );
-  }
-
-  const renderQ6 = () => {
-    return (
-      <div className={'CoefficientInput m-1'}>
-        <NumberInput
-          label={<>Q<sub>6</sub></>}
-          isNegative={true}
-          value={coefficients.q6}
-          isError={coefficients.q6 === '-'}
-          isGrouped={true}
-          onChange={val => handleChangeValue('q6', val)}
-        />
-      </div>
-    );
-  }
-
-  const renderPreviousValues = () => {
-    if (isEmpty(previousCoefficients)) {
-      return null;
-    }
-
-    return (
-      <>
-        <div>
-          <i>предыдущие значение коэффициентов:</i> <br/>
-          Q<sub>1</sub>: {previousCoefficients.q1},
-          Q<sub>2</sub>: {previousCoefficients.q2},
-          Q<sub>3</sub>: {previousCoefficients.q3},
-          <br/>
-          Q<sub>4</sub>: {previousCoefficients.q4},
-          Q<sub>5</sub>: {previousCoefficients.q5},
-          Q<sub>6</sub>: {previousCoefficients.q6}
-        </div>
-        <button
-          type="submit"
-          className="btn btn-secondary"
-          onClick={handleResetPrevious}
-        >
-          Скрыть
-        </button>
-      </>
-    )
-  }
+    {
+      title: 'при локализации конкремента в верхней чашечке',
+      element: CalyxTop
+    },
+    {
+      title: 'при локализации конкремента в нижней и средней чашечке',
+      element: CalyxMidBottom
+    },
+    {
+      title: 'при локализации конкремента в В/3 мочеточника',
+      element: UreterTop
+    },
+    {
+      title: 'при локализации конкремента в Н/3 мочеточника',
+      element: UreterBottom
+    },
+    {
+      title: 'при локализации конкремента в среднем отделе мочеточника',
+      element: UreterMiddle
+    },
+  ];
 
   return (
     <div className="p-5 mb-4 bg-light rounded-3">
       <div className="container">
         <p className="h4 fw-normal pb-3">Редактирование модели прогнозирования длительности лазерной литотрипсии</p>
-        <div>
-          <p className="lead m-0">Аргументы:</p>
-          <p className="ps-4">
-            X<sub>1</sub> - cуммарное «чистое» время затраченное на полную фрагментацию камня<br/>
-            X<sub>2</sub> - сложность анатомии (место локализации)<br/>
-            X<sub>3</sub> - видимость<br/>
-            X<sub>4</sub> - пыльность камня<br/>
-            X<sub>5</sub> - подвижность камня<br/>
-          </p>
-        </div>
-        <div>
-          <p className="lead m-0">Коэффициенты:</p>
-          { renderQ1() }
-          { renderQ2() }
-          { renderQ3() }
-          { renderQ4() }
-          { renderQ5() }
-          { renderQ6() }
-        </div>
-        { renderPreviousValues() }
-        <div>
-          <p className="lead m-0">Модель:</p>
-          <p className="ps-4">
-            T = Q<sub>1</sub> + Q<sub>2</sub>*X<sub>1</sub> + Q<sub>3</sub>*X<sub>2</sub> + Q<sub>4</sub>*X<sub>3</sub> + Q<sub>5</sub>*X<sub>4</sub> + Q<sub>6</sub>*X<sub>5</sub>
-          </p>
-        </div>
-        {!isEqualsObj && <div className="alert alert-primary" role="alert">
-          Коэффициенты были изменены! Чтобы применить изменения нажмите кнопку "Сохранить"
-        </div>}
-        <div className="mt-3">
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={isEqualsObj}
-            onClick={handleSaveCoefficients}
-          >
-            Сохранить
-          </button>
-          <button
-            type="reset"
-            className="btn btn-primary ms-2"
-            disabled={!coefficientStore.isCoefficientsChanged}
-            onClick={handleReset}
-          >
-            Сбросить
-          </button>
-        </div>
-
+        <Accordion defaultActiveKey={0} alwaysOpen>
+          { content.map((item, index) => (
+            <Accordion.Item eventKey={index}>
+              <Accordion.Header>{item.title}</Accordion.Header>
+              <Accordion.Body>
+                { React.createElement(item.element) }
+              </Accordion.Body>
+            </Accordion.Item>
+          )) }
+        </Accordion>
       </div>
     </div>
   )
