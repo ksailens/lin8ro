@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Home } from "./pages/Home";
 import { About } from "./pages/About";
 import { Records } from "./pages/Records";
+import { Help } from "./pages/Help";
 import { Navbar } from "./components/Navbar";
 import { Header } from "./components/Header";
 import { ModelSettings } from "./pages/ModelSettings";
@@ -34,6 +35,7 @@ const App = observer(() => {
     return (
       <Switch>
         <Route path={'/'} exact component={Home} />
+        <Route path={'/help'} exact component={Help} />
         <Route path={'/records'} component={Records} />
         <Route path={'/about'} component={About} />
         <Route path={'/model_settings'} component={ModelSettings} />

@@ -5,6 +5,9 @@ import {observer} from "mobx-react";
 import { OverlayTrigger, Tooltip, Modal, Button } from 'react-bootstrap';
 import round from 'lodash/round';
 import { NumberInput } from "../ui/NumberInput";
+import moment from "moment";
+
+const DEFAULT_TIME = { h: '', m: '', s: '' };
 
 export const Records = observer(() => {
   const { dbStore } = useStores();
@@ -13,7 +16,7 @@ export const Records = observer(() => {
   const [error, setError] = useState(false);
   const [show, setShow] = useState(false);
   const [id, setId] = useState('');
-  const [realOperationDuration, setRealOperationDuration] = useState('');
+  const [realOperationDuration, setRealOperationDuration] = useState(DEFAULT_TIME);
 
   const getData = useCallback(() => {
     setPending(true);
@@ -42,10 +45,16 @@ export const Records = observer(() => {
     dbStore.deleteOperation(id);
   }
 
+  const secondsToTime = seconds => moment.utc(seconds*1000).format('HH:mm:ss');
+
   const handleOpenModal = id => {
-    const one = data.filter(one => one.id === id);
-    if (one.realOperationDuration) {
-      setRealOperationDuration(one.realOperationDuration);
+    const one = data.find(one => one.id === id);
+    if (one && one.realOperationDuration) {
+      setRealOperationDuration({
+        h: moment.utc(one.realOperationDuration*1000).hours(),
+        m: moment.utc(one.realOperationDuration*1000).minutes(),
+        s: moment.utc(one.realOperationDuration*1000).seconds(),
+      })
     }
     setId(id);
     setShow(true);
@@ -53,7 +62,7 @@ export const Records = observer(() => {
 
   const handleCloseModal = () => {
     setId('');
-    setRealOperationDuration('');
+    setRealOperationDuration(DEFAULT_TIME);
     setShow(false);
   }
 
@@ -81,13 +90,17 @@ export const Records = observer(() => {
     return null;
   }
 
-  const handleFieldChange = val => {
-    setRealOperationDuration(val);
+  const handleFieldChange = (label, val) => {
+    setRealOperationDuration(prevState => ({
+      ...prevState,
+      [label]: val
+    }));
   }
 
   const handleSave = id => {
     handleCloseModal();
-    dbStore.editOperation(id, { realOperationDuration })
+    const seconds = ((realOperationDuration.h || 0) * 3600) + ((realOperationDuration.m || 0) * 60) + (realOperationDuration.s ? parseInt(realOperationDuration.s, 10) : 0);
+    dbStore.editOperation(id, { realOperationDuration: seconds })
       .finally(() => {
         handleGetData()
       })
@@ -111,7 +124,7 @@ export const Records = observer(() => {
               <th colSpan='3'>Пациент</th>
               <th colSpan='10'>Конкремент</th>
               <th colSpan='3'>Параметры ФКЛТ</th>
-              <th rowSpan='2'>Фактическое время дробления, мин</th>
+              <th rowSpan='2'>Фактическое время дробления</th>
               <th rowSpan='2'>Погрешность, %</th>
               <th rowSpan='2'> </th>
               <th rowSpan='2'> </th>
@@ -132,7 +145,7 @@ export const Records = observer(() => {
               <th>Видимость</th>
               <th>Частота импульсов, Гц</th>
               <th>Энергия импульсов, Дж</th>
-              <th>Длительность дробления камня, мин.</th>
+              <th>Длительность дробления камня</th>
             </tr>
             </thead>
             <tbody>
@@ -154,14 +167,14 @@ export const Records = observer(() => {
                 <td>{ Muddiness[one.muddiness] }</td>
                 <td>{ one.frequency }</td>
                 <td>{ one.energy }</td>
-                <td>{ one.operationDuration }</td>
-                <td>{ one.realOperationDuration || '' }</td>
+                <td>{ secondsToTime(one.operationDuration) }</td>
+                <td>{ one.realOperationDuration ? secondsToTime(one.realOperationDuration) : '' }</td>
                 <td>{ calculateAccuracy(one.operationDuration, one.realOperationDuration) }</td>
                 <td>
                   <OverlayTrigger
                     overlay={
                       <Tooltip>
-                        Добавить фактическое время проведения операции и расчитать погрешность
+                        Добавить фактическое время проведения операции и рассчитать погрешность
                       </Tooltip>
                     }>
                     <button
@@ -202,30 +215,39 @@ export const Records = observer(() => {
         centered
         size="lg"
         onHide={handleCloseModal}>
-
         <Modal.Header closeButton>
           <Modal.Title>Добавление фактического времени операции</Modal.Title>
         </Modal.Header>
-
         <Modal.Body>
           <div className="mb-3">
-            <NumberInput
-              onChange={handleFieldChange}
-              value={realOperationDuration}
-              label={
-                <>
-                  Фактическое время, мин
-                </>
-              }
-            />
+            <div className="input-group">
+              <NumberInput
+                label={'часы'}
+                value={realOperationDuration.h}
+                isGrouped={true}
+                onChange={val => handleFieldChange('h', val)}
+              />
+              <NumberInput
+                label={'минуты'}
+                value={realOperationDuration.m}
+                isGrouped={true}
+                fixedValue={59}
+                onChange={val => handleFieldChange('m', val)}
+              />
+              <NumberInput
+                label={'секунды'}
+                value={realOperationDuration.s}
+                isGrouped={true}
+                fixedValue={59}
+                onChange={val => handleFieldChange('s', val)}
+              />
+            </div>
           </div>
         </Modal.Body>
-
         <Modal.Footer>
           <Button variant="secondary" onClick={handleCloseModal}>Закрыть</Button>
-          <Button disabled={!realOperationDuration} variant="primary" onClick={() => handleSave(id)}>Сохранить</Button>
+          <Button disabled={!realOperationDuration.h && !realOperationDuration.m && !realOperationDuration.s} variant="primary" onClick={() => handleSave(id)}>Сохранить</Button>
         </Modal.Footer>
-
       </Modal>
     )
   }
