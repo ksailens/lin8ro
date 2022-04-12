@@ -9,7 +9,7 @@ import { useHistory } from 'react-router-dom';
 import { useStores } from "../stores";
 import { Systems } from "../constants";
 
-const Home = observer(() => {
+export const Home = observer(() => {
   const { formStore } = useStores();
   const { formParameters } = formStore;
   const history = useHistory();
@@ -348,4 +348,3 @@ const Home = observer(() => {
     </div>
   )
 });
-export default Home;

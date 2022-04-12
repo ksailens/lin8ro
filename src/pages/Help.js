@@ -1,7 +1,7 @@
 import React from "react";
 import { Accordion } from "react-bootstrap";
 
-const Help = () => {
+export const Help = () => {
   return (
     <div className="p-5 mb-4 bg-light rounded-3">
       <div className="container">
@@ -73,4 +73,3 @@ const Help = () => {
     </div>
   )
 }
-export default Help;
