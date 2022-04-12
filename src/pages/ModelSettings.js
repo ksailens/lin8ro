@@ -4,7 +4,7 @@ import { Accordion } from "react-bootstrap";
 import { Pelvis, UreterBottom, UreterMiddle, UreterTop, CalyxTop, CalyxMidBottom } from '../components/systems'
 import { useStores } from "../stores";
 
-export const ModelSettings = observer(() => {
+const ModelSettings = observer(() => {
   const { coefficientStore } = useStores();
 
   useEffect(() => {
@@ -56,3 +56,4 @@ export const ModelSettings = observer(() => {
     </div>
   )
 });
+export default ModelSettings;

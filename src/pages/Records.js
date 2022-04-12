@@ -9,7 +9,7 @@ import moment from "moment";
 
 const DEFAULT_TIME = { h: '', m: '', s: '' };
 
-export const Records = observer(() => {
+const Records = observer(() => {
   const { dbStore } = useStores();
   const { data } = dbStore;
   const [pending, setPending] = useState(false);
@@ -272,3 +272,4 @@ export const Records = observer(() => {
     </div>
   )
 });
+export default Records;
