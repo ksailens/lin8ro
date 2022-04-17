@@ -21,12 +21,12 @@ export const Results = observer(() => {
             <td>{thickness}</td>
           </tr>
           <tr>
-            <td className='text-decoration-underline'>Длительность литотрипсии</td>
-            <td>{moment.duration(operationDuration*1000, 'seconds').format('m [мин] s [сек]')}</td>
+            <td className='text-decoration-underline'>T<sub>лит-чист</sub></td>
+            <td>{moment.duration(tLitChistoe, 'seconds').format('m [мин] s [сек]')}</td>
           </tr>
           <tr>
-            <td className='text-decoration-underline'>T<sub>лит-чист</sub></td>
-            <td>{tLitChistoe}</td>
+            <td className='text-decoration-underline'>Длительность литотрипсии</td>
+            <td>{moment.duration(operationDuration, 'seconds').format('m [мин] s [сек]')}</td>
           </tr>
         </tbody>
       </table>

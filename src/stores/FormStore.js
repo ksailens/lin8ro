@@ -86,7 +86,7 @@ class FormStore {
       operationDuration: T1 > 0 ? round(T1, 1) * 60 : 6,
       thickness: round(calcThickness, 2),
       weight: round(calcMass, 3),
-      tLitChistoe: T2
+      tLitChistoe: round(T2, 1) * 60
     }
     this.cloneInformation = {
       ...this.formParameters,
