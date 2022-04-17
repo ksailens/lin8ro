@@ -2,6 +2,7 @@ import React from "react";
 import {observer} from "mobx-react";
 import { useStores } from "../stores";
 import moment from "moment";
+import 'moment-duration-format';
 
 export const Results = observer(() => {
   const { formStore } = useStores();
@@ -20,8 +21,8 @@ export const Results = observer(() => {
             <td>{thickness}</td>
           </tr>
           <tr>
-            <td className='text-decoration-underline'>Длительность дробления камня</td>
-            <td>{moment.utc(operationDuration*1000).format('HH:mm:ss')}</td>
+            <td className='text-decoration-underline'>Длительность литотрипсии</td>
+            <td>{moment.duration(operationDuration*1000, 'seconds').format('m [мин] s [сек]')}</td>
           </tr>
           <tr>
             <td className='text-decoration-underline'>T<sub>лит-чист</sub></td>

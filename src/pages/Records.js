@@ -6,8 +6,9 @@ import { OverlayTrigger, Tooltip, Modal, Button } from 'react-bootstrap';
 import round from 'lodash/round';
 import { NumberInput } from "../ui/NumberInput";
 import moment from "moment";
+import 'moment-duration-format';
 
-const DEFAULT_TIME = { h: '', m: '', s: '' };
+const DEFAULT_TIME = { m: '', s: '' };
 
 export const Records = observer(() => {
   const { dbStore } = useStores();
@@ -45,14 +46,15 @@ export const Records = observer(() => {
     dbStore.deleteOperation(id);
   }
 
-  const secondsToTime = seconds => moment.utc(seconds*1000).format('HH:mm:ss');
+  const secondsToTime = seconds => moment.duration(seconds, 'seconds').format('m [мин] s [сек]');
 
   const handleOpenModal = id => {
     const one = data.find(one => one.id === id);
     if (one && one.realOperationDuration) {
       setRealOperationDuration({
-        h: moment.utc(one.realOperationDuration*1000).hours(),
-        m: moment.utc(one.realOperationDuration*1000).minutes(),
+        m: moment.duration(one.realOperationDuration, 'seconds').format('m', {
+          trunc: true
+        }),
         s: moment.utc(one.realOperationDuration*1000).seconds(),
       })
     }
@@ -99,7 +101,7 @@ export const Records = observer(() => {
 
   const handleSave = id => {
     handleCloseModal();
-    const seconds = ((realOperationDuration.h || 0) * 3600) + ((realOperationDuration.m || 0) * 60) + (realOperationDuration.s ? parseInt(realOperationDuration.s, 10) : 0);
+    const seconds = ((realOperationDuration.m || 0) * 60) + (realOperationDuration.s ? parseInt(realOperationDuration.s, 10) : 0);
     dbStore.editOperation(id, { realOperationDuration: seconds })
       .finally(() => {
         handleGetData()
@@ -124,7 +126,7 @@ export const Records = observer(() => {
               <th colSpan='3'>Пациент</th>
               <th colSpan='10'>Конкремент</th>
               <th colSpan='3'>Параметры ФКЛТ</th>
-              <th rowSpan='2'>Фактическое время дробления</th>
+              <th rowSpan='2'>Фактическое время литотрипсии</th>
               <th rowSpan='2'>Погрешность, %</th>
               <th rowSpan='2'> </th>
               <th rowSpan='2'> </th>
@@ -145,7 +147,7 @@ export const Records = observer(() => {
               <th>Видимость</th>
               <th>Частота импульсов, Гц</th>
               <th>Энергия импульсов, Дж</th>
-              <th>Длительность дробления камня</th>
+              <th>Длительность литотрипсии</th>
             </tr>
             </thead>
             <tbody>
@@ -222,16 +224,9 @@ export const Records = observer(() => {
           <div className="mb-3">
             <div className="input-group">
               <NumberInput
-                label={'часы'}
-                value={realOperationDuration.h}
-                isGrouped={true}
-                onChange={val => handleFieldChange('h', val)}
-              />
-              <NumberInput
                 label={'минуты'}
                 value={realOperationDuration.m}
                 isGrouped={true}
-                fixedValue={59}
                 onChange={val => handleFieldChange('m', val)}
               />
               <NumberInput
