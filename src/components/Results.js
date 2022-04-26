@@ -13,7 +13,7 @@ export const Results = observer(() => {
       <table className="table table-striped">
         <tbody>
           <tr className='text-decoration-underline'>
-            <td>Масса, г</td>
+            <td>Масса, мг</td>
             <td>{weight}</td>
           </tr>
           <tr className='text-decoration-underline'>

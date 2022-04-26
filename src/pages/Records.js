@@ -140,7 +140,7 @@ export const Records = observer(() => {
               <th>Локализация</th>
               <th>Рентгенологическая плотность, HU</th>
               <th>γ, мг/Дж</th>
-              <th>Масса, г</th>
+              <th>Масса, мг</th>
               <th>Плотность, г/см<sup><small>3</small></sup></th>
               <th>Подвижность</th>
               <th>Пыльность</th>

@@ -67,8 +67,8 @@ class FormStore {
     const { currentCoefficients } = coefficientStore;
 
     let calcThickness = 1.539 + 0.000485 * xrayThickness;
-    let calcVolume = volume ? parseFloat(volume) : (width * height * depth)/1000;
-    let calcMass = calcThickness * calcVolume;
+    let calcVolume = volume ? parseFloat(volume) : (width * height * depth * Math.PI * 0.167)/1000;
+    let calcMass = calcThickness * calcVolume * 1000;
     const localizationValue = [Systems.ureterMiddle, Systems.ureterTop, Systems.ureterBottom].includes(localization) ? -1 : 1;
 
     let T1;
@@ -83,10 +83,10 @@ class FormStore {
     }
 
     this.operationData = {
-      operationDuration: T1 > 0 ? round(T1 * 60, 1) : 6,
+      operationDuration: T1 > 0 ? round(T1, 1) : 6,
       thickness: round(calcThickness, 2),
-      weight: round(calcMass, 3),
-      tLitChistoe: round(T2 * 60, 1)
+      weight: round(calcMass, 2),
+      tLitChistoe: round(T2, 1)
     }
     this.cloneInformation = {
       ...this.formParameters,
