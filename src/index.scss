@@ -39,3 +39,13 @@ code {
     max-width: 100%;
   }
 }
+.questionIcon {
+  margin-left: 5px;
+  width: 14px;
+  height: 14px;
+
+  svg {
+    display: flex;
+    fill: #063BAE;
+  }
+}

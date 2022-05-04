@@ -233,7 +233,7 @@ export const Records = observer(() => {
                 label={'секунды'}
                 value={realOperationDuration.s}
                 isGrouped={true}
-                fixedValue={59}
+                maxValue={59}
                 onChange={val => handleFieldChange('s', val)}
               />
             </div>

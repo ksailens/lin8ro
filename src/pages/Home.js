@@ -8,6 +8,7 @@ import {Results} from "../components/Results";
 import { useHistory } from 'react-router-dom';
 import { useStores } from "../stores";
 import { Systems } from "../constants";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 export const Home = observer(() => {
   const { formStore } = useStores();
@@ -17,14 +18,51 @@ export const Home = observer(() => {
     thickness, massLoss, mobility, dustiness, muddiness, frequency,
     energy, fio, birthDate, operationDate } = formParameters;
 
-  const handleSubmit = ev => {
-    ev.preventDefault();
-    formStore.calculateDuration();
+  const validate = () => {
+    const forms = document.querySelectorAll('.needs-validation');
+    // Зацикливайтесь на них и предотвращайте отправку
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault()
+            event.stopPropagation()
+          }
+          form.classList.add('was-validated')
+        }, false)
+      })
+
+    const invalidElems = document.querySelectorAll('.form-control:invalid');
+    if (invalidElems && invalidElems[0]) {
+      const yOffset = -30;
+      const y = invalidElems[0].getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({top: y, behavior: 'smooth'});
+    }
+  }
+
+  const resetValidate = () => {
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms)
+      .forEach(function (form) {
+        form.classList.remove('was-validated');
+      })
+  }
+
+  const handleSubmit = () => {
+    validate();
   }
 
   const handleResetForm = ev => {
     ev.preventDefault();
     formStore.resetForm();
+    resetValidate();
+  }
+
+  const handleSubmitForm = ev => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    resetValidate();
+    formStore.calculateDuration();
   }
 
   const handleFieldChange = (fieldName, value) => {
@@ -33,11 +71,38 @@ export const Home = observer(() => {
 
   const handleGoToSettings = () => history.push('/model_settings');
 
+  const renderIcon = () => (
+    <div className='questionIcon'>
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
+              className="bi bi-question-circle" viewBox="0 0 16 16">
+      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+      <path
+        d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+      </svg>
+    </div>
+  )
+
+  const isInKidney = [Systems.pelvis, Systems.calyxTop, Systems.calyxMidBottom].includes(localization);
+
   const renderWeightVolumeDimensions = () => {
     return (
       <div className="d-flex justify-content-between flex-column">
         <div style={{maxWidth: '450px'}} className="mb-3">
-          <label className="form-label">Размер, мм</label>
+          <label className="form-label">
+            <div className='d-flex flex-row align-items-center'>
+              Размер, мм
+              <OverlayTrigger
+                overlay={
+                  <Tooltip>
+                    максимальные размеры
+                    {' '}
+                    {isInKidney ? '70x35x35 мм' : '20x10x10 мм'}
+                  </Tooltip>
+                }>
+                {renderIcon()}
+              </OverlayTrigger>
+            </div>
+          </label>
           <div className="input-group">
             <NumberInput
               label={'Д'}
@@ -45,6 +110,8 @@ export const Home = observer(() => {
               isGrouped={true}
               disabled={!!volume || !!weight}
               onChange={val => handleFieldChange('width', val)}
+              isRequired={true}
+              maxValue={isInKidney ? 70 : 20}
             />
             <NumberInput
               label={'Ш'}
@@ -52,6 +119,8 @@ export const Home = observer(() => {
               isGrouped={true}
               disabled={!!volume || !!weight}
               onChange={val => handleFieldChange('height', val)}
+              isRequired={true}
+              maxValue={isInKidney ? 35 : 10}
             />
             <NumberInput
               label={'T'}
@@ -59,6 +128,8 @@ export const Home = observer(() => {
               isGrouped={true}
               disabled={!!volume || !!weight}
               onChange={val => handleFieldChange('depth', val)}
+              isRequired={true}
+              maxValue={isInKidney ? 35 : 10}
             />
           </div>
         </div>
@@ -68,13 +139,24 @@ export const Home = observer(() => {
         <div className="mb-3">
           <NumberInput
             label={
-              <>
+              <div className='d-flex flex-row align-items-center'>
                 Объем, см<sup><small>3</small></sup>
-              </>
+                <OverlayTrigger
+                  overlay={
+                    <Tooltip>
+                      до 20см<sup><small>3</small></sup>
+                    </Tooltip>
+                  }>
+                  {renderIcon()}
+                </OverlayTrigger>
+              </div>
             }
             value={volume}
             disabled={(!!width && !!height && !!depth) || !!weight}
             onChange={val => handleFieldChange('volume', val)}
+            isRequired={true}
+            maxValue={20}
+            errorText="Введите объем или укажите размеры конкремента"
           />
         </div>
       </div>
@@ -109,9 +191,23 @@ export const Home = observer(() => {
         <NumberInput
           disabled={!!weight || !!thickness}
           value={xrayThickness}
-          fixedValue={3000}
-          label='Рентгенологическая плотность, HU'
+          maxValue={3000}
+          label={
+            <div className='d-flex flex-row align-items-center'>
+              Рентгенологическая плотность, HU
+              <OverlayTrigger
+                overlay={
+                  <Tooltip>
+                    до 3000
+                  </Tooltip>
+                }>
+                {renderIcon()}
+              </OverlayTrigger>
+            </div>
+          }
           onChange={val => handleFieldChange('xrayThickness', val)}
+          isRequired={true}
+          errorText='Обязательное поле'
         />
       </div>
     </>
@@ -239,7 +335,11 @@ export const Home = observer(() => {
             className="form-control text-center"
             onChange={ev => handleFieldChange('fio', ev.target.value)}
             value={fio}
+            required
           />
+          <div className="invalid-feedback">
+            Пожалуйста, введите ФИО пациента
+          </div>
         </div>
         <div>
           <label className="form-label">
@@ -251,7 +351,11 @@ export const Home = observer(() => {
             className="form-control"
             value={birthDate}
             onChange={ev => handleFieldChange('birthDate', ev.target.value)}
+            required
           />
+          <div className="invalid-feedback">
+            Пожалуйста, введите дату рождения пациента
+          </div>
         </div>
       </div>
     )
@@ -272,7 +376,11 @@ export const Home = observer(() => {
             className="form-control"
             value={operationDate}
             onChange={ev => handleFieldChange('operationDate', ev.target.value)}
+            required
           />
+          <div className="invalid-feedback">
+            Пожалуйста, введите дату проведения операции
+          </div>
         </div>
       </>
     )
@@ -280,7 +388,7 @@ export const Home = observer(() => {
 
   return (
     <div className='MainForm d-flex border rounded bg-light justify-content-between flex-column'>
-      <form className='leftBlock pb-3' onSubmit={handleSubmit}>
+      <form className='leftBlock pb-3 needs-validation' onSubmit={handleSubmitForm} noValidate>
         <ul className="list-group">
           <li className="list-group-item pb-3">
             <div>
@@ -300,6 +408,10 @@ export const Home = observer(() => {
                 value={massLoss}
                 onChange={val => handleFieldChange('massLoss', val)}
                 label={'Удельная величина потери массы камня на 1 джоуль – γ, мг/Дж'}
+                isRequired={true}
+                errorText='Обязательное поле'
+                minValue={0.2}
+                maxValue={0.55}
               />
             </div>
           </li>
@@ -322,7 +434,8 @@ export const Home = observer(() => {
         </ul>
         <div className="mt-3">
           <button
-            disabled={formStore.isDisableButton}
+            // disabled={formStore.isDisableButton}
+            onClick={handleSubmit}
             type="submit"
             className="btn btn-primary"
           >
