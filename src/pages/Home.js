@@ -407,7 +407,19 @@ export const Home = observer(() => {
               <NumberInput
                 value={massLoss}
                 onChange={val => handleFieldChange('massLoss', val)}
-                label={'Удельная величина потери массы камня на 1 джоуль – γ, мг/Дж'}
+                label={
+                  <div className='d-flex flex-row align-items-center'>
+                    Удельная величина потери массы камня на 1 джоуль – γ, мг/Дж
+                    <OverlayTrigger
+                      overlay={
+                        <Tooltip>
+                          от 0.2 до 0.55
+                        </Tooltip>
+                      }>
+                      {renderIcon()}
+                    </OverlayTrigger>
+                  </div>
+                }
                 isRequired={true}
                 errorText='Обязательное поле'
                 minValue={0.2}
