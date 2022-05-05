@@ -198,7 +198,7 @@ export const Home = observer(() => {
               <OverlayTrigger
                 overlay={
                   <Tooltip>
-                    до 3000
+                    до 3000 HU
                   </Tooltip>
                 }>
                 {renderIcon()}
@@ -413,7 +413,7 @@ export const Home = observer(() => {
                     <OverlayTrigger
                       overlay={
                         <Tooltip>
-                          от 0.2 до 0.55
+                          от 0.2 до 0.55 мг/Дж
                         </Tooltip>
                       }>
                       {renderIcon()}
