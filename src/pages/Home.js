@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { NumberInput } from "../ui/NumberInput";
 import {Select} from "../ui/Select";
 import {RadioGroup} from "../ui/RadioGroup";
@@ -8,15 +8,47 @@ import {Results} from "../components/Results";
 import { useHistory } from 'react-router-dom';
 import { useStores } from "../stores";
 import { Systems } from "../constants";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Button, Modal, OverlayTrigger, Tooltip } from "react-bootstrap";
+
+export const canUseDom = (() => !!(
+  (typeof window !== 'undefined'
+    && window.document && window.document.createElement)
+))() || false;
 
 export const Home = observer(() => {
   const { formStore } = useStores();
   const { formParameters } = formStore;
+  const [showModal, setShowModal] = useState(false);
+  const resetButton = useRef(null);
   const history = useHistory();
   const { width, height, depth, volume, weight, localization, xrayThickness,
     thickness, massLoss, mobility, dustiness, muddiness, frequency,
     energy, fio, birthDate, operationDate } = formParameters;
+
+  useEffect(() => {
+    if (canUseDom) {
+      window.document.addEventListener('mousedown', handleDocumentMouseDown);
+    }
+
+    return () => {
+      if (canUseDom) {
+        window.document.removeEventListener('mousedown', handleDocumentMouseDown);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (canUseDom) {
+      window.document.addEventListener('keydown', handleKeyPress);
+    }
+
+    return () => {
+      if (canUseDom) {
+        window.document.removeEventListener('keydown', handleKeyPress);
+      }
+    };
+  }, []);
+
 
   const validate = () => {
     const forms = document.querySelectorAll('.needs-validation');
@@ -52,8 +84,18 @@ export const Home = observer(() => {
     validate();
   }
 
+  const handleKeyPress = ev => {
+    if (ev.keyCode === 9) {
+      const errors = document.querySelectorAll('.is-invalid');
+      if (errors.length) {
+        setShowModal(true);
+      }
+    }
+  }
+
   const handleResetForm = ev => {
     ev.preventDefault();
+    Array.from(document.querySelectorAll('.is-invalid')).forEach((el) => el.classList.remove('is-invalid'));
     formStore.resetForm();
     resetValidate();
   }
@@ -65,13 +107,32 @@ export const Home = observer(() => {
     formStore.calculateDuration();
   }
 
+  const handleCloseModal = () => {
+    const errors = document.querySelectorAll('.is-invalid');
+    setShowModal(false);
+    if (errors.length) {
+      errors[0].focus();
+    }
+  }
+
+  const handleDocumentMouseDown = (ev) => {
+    if (resetButton.current) {
+      if (!resetButton.current.contains(ev.target)) {
+        const errors = document.querySelectorAll('.is-invalid');
+        if (errors.length) {
+          setShowModal(true);
+        }
+      }
+    }
+  }
+
   const validateField = (fieldName) => {
     const input = document.getElementById(fieldName);
     if (input) {
       const validityState = input.validity;
 
       if (validityState.valueMissing) {
-        input.setCustomValidity('You gotta fill this out, yo!');
+        input.classList.add('is-invalid');
       } else if (validityState.rangeUnderflow) {
         input.classList.add('is-invalid');
       } else if (validityState.rangeOverflow) {
@@ -98,7 +159,29 @@ export const Home = observer(() => {
           d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
       </svg>
     </div>
-  )
+  );
+
+  const renderEditModal = () => {
+    return (
+      <Modal
+        backdrop="static"
+        show={showModal}
+        centered
+        size="lg">
+        <Modal.Header>
+          <Modal.Title>Некорректные данные</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="alert alert-danger" role="alert">
+            Введите корректные данные, воспользовавшись подсказкой под полем!
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>ОК</Button>
+        </Modal.Footer>
+      </Modal>
+    )
+  }
 
   const isInKidney = [Systems.pelvis, Systems.calyxTop, Systems.calyxMidBottom].includes(localization);
 
@@ -128,7 +211,8 @@ export const Home = observer(() => {
                   {
                     disabled: !!volume || !!weight,
                     max: isInKidney ? 70 : 20,
-                    required: true
+                    required: true,
+                    id: 'width',
                   }
                 }
                 label={'длина'}
@@ -143,7 +227,8 @@ export const Home = observer(() => {
                   {
                     disabled: !!volume || !!weight,
                     max: isInKidney ? 35 : 10,
-                    required: true
+                    required: true,
+                    id: 'height',
                   }
                 }
                 label={'ширина'}
@@ -158,10 +243,11 @@ export const Home = observer(() => {
                   {
                     disabled: !!volume || !!weight,
                     max: isInKidney ? 35 : 10,
-                    required: true
+                    required: true,
+                    id: 'depth',
                   }
                 }
-                label={'толшина'}
+                label={'толщина'}
                 value={depth}
                 onChange={val => handleFieldChange('depth', val)}
                 errorText={depth && depth > (isInKidney ? 35 : 10) ? `Толщина не более ${isInKidney ? 35 : 10}мм` : 'Введите число'}
@@ -178,7 +264,8 @@ export const Home = observer(() => {
               {
                 disabled: (!!width && !!height && !!depth) || !!weight,
                 max: 20,
-                required: true
+                required: true,
+                id: 'volume',
               }
             }
             label={
@@ -236,7 +323,7 @@ export const Home = observer(() => {
               id: 'xrayThickness',
               disabled: !!weight || !!thickness,
               max: 3000,
-              required: true
+              required: true,
             }
           }
           label={
@@ -377,6 +464,7 @@ export const Home = observer(() => {
             Ф.И.О.
           </label>
           <input
+            id="fio"
             type="text"
             className="form-control text-center"
             onChange={ev => handleFieldChange('fio', ev.target.value)}
@@ -392,6 +480,7 @@ export const Home = observer(() => {
             Дата рождения
           </label>
           <input
+            id="birthDate"
             type="date"
             name='birthDate'
             className="form-control"
@@ -417,6 +506,7 @@ export const Home = observer(() => {
             Дата проведения
           </label>
           <input
+            id="operationDate"
             type="date"
             name='operationDate'
             className="form-control"
@@ -456,7 +546,8 @@ export const Home = observer(() => {
                     min: 0.2,
                     max: 0.55,
                     step: 0.00001,
-                    required: true
+                    required: true,
+                    id: "massLoss",
                   }
                 }
                 value={massLoss}
@@ -506,6 +597,7 @@ export const Home = observer(() => {
             Рассчитать
           </button>
           <button
+            ref={resetButton}
             type="reset"
             onClick={handleResetForm}
             className="btn btn-primary ms-2"
@@ -522,6 +614,7 @@ export const Home = observer(() => {
         </div>
       </form>
       { renderResult() }
+      { showModal && renderEditModal() }
     </div>
   )
 });
