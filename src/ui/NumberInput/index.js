@@ -7,13 +7,12 @@ export const NumberInput = props => {
     value,
     isGrouped,
     onChange,
-    disabled,
     isNegative,
     isError,
     maxValue,
     minValue,
-    isRequired,
-    errorText
+    errorText,
+    inputProps,
   } = props;
 
   useEffect(() => {
@@ -74,12 +73,11 @@ export const NumberInput = props => {
           <label className="form-label">{label}</label>
       }
       <input
-        disabled={disabled}
-        type="text"
+        {...inputProps}
+        type="number"
         className={`form-control text-center ${isError && 'is-invalid'}`}
         onChange={handleChange}
         value={defaultValue}
-        required={isRequired}
       />
       {!isGrouped && (<div className="invalid-feedback">
         {errorText ? errorText : (isError && `Введите число`)}
@@ -91,19 +89,23 @@ export const NumberInput = props => {
 NumberInput.propTypes = {
   onChange: PropTypes.func,
   isGrouped: PropTypes.bool,
-  disabled: PropTypes.bool,
   value: PropTypes.any,
   label: PropTypes.any,
   maxValue: PropTypes.number,
   minValue: PropTypes.number,
-  isRequired: PropTypes.bool,
-  errorText: PropTypes.string,
+  errorText: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
+  inputProps: PropTypes.shape({
+    required: PropTypes.bool,
+    id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    disabled: PropTypes.bool,
+    min: PropTypes.number,
+    max: PropTypes.number,
+    step: PropTypes.number
+  })
 }
 
 NumberInput.defaultProps = {
   label: '',
   errorText: '',
   isGrouped: false,
-  disabled: false,
-  isRequired: false
 }

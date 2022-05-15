@@ -65,7 +65,25 @@ export const Home = observer(() => {
     formStore.calculateDuration();
   }
 
+  const validateField = (fieldName) => {
+    const input = document.getElementById(fieldName);
+    if (input) {
+      const validityState = input.validity;
+
+      if (validityState.valueMissing) {
+        input.setCustomValidity('You gotta fill this out, yo!');
+      } else if (validityState.rangeUnderflow) {
+        input.classList.add('is-invalid');
+      } else if (validityState.rangeOverflow) {
+        input.classList.add('is-invalid');
+      } else {
+        input.classList.remove('is-invalid');
+      }
+    }
+  }
+
   const handleFieldChange = (fieldName, value) => {
+    validateField(fieldName, value);
     formStore.updateField(fieldName, value)
   }
 
@@ -74,10 +92,10 @@ export const Home = observer(() => {
   const renderIcon = () => (
     <div className='questionIcon'>
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor"
-              className="bi bi-question-circle" viewBox="0 0 16 16">
-      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-      <path
-        d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+           className="bi bi-question-circle" viewBox="0 0 16 16">
+        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+        <path
+          d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
       </svg>
     </div>
   )
@@ -87,7 +105,7 @@ export const Home = observer(() => {
   const renderWeightVolumeDimensions = () => {
     return (
       <div className="d-flex justify-content-between flex-column">
-        <div style={{maxWidth: '450px'}} className="mb-3">
+        <div className="mb-3">
           <label className="form-label">
             <div className='d-flex flex-row align-items-center'>
               Размер, мм
@@ -103,34 +121,52 @@ export const Home = observer(() => {
               </OverlayTrigger>
             </div>
           </label>
-          <div className="input-group">
-            <NumberInput
-              label={'Д'}
-              value={width}
-              isGrouped={true}
-              disabled={!!volume || !!weight}
-              onChange={val => handleFieldChange('width', val)}
-              isRequired={true}
-              maxValue={isInKidney ? 70 : 20}
-            />
-            <NumberInput
-              label={'Ш'}
-              value={height}
-              isGrouped={true}
-              disabled={!!volume || !!weight}
-              onChange={val => handleFieldChange('height', val)}
-              isRequired={true}
-              maxValue={isInKidney ? 35 : 10}
-            />
-            <NumberInput
-              label={'T'}
-              value={depth}
-              isGrouped={true}
-              disabled={!!volume || !!weight}
-              onChange={val => handleFieldChange('depth', val)}
-              isRequired={true}
-              maxValue={isInKidney ? 35 : 10}
-            />
+          <div className="d-flex justify-content-between flex-md-row flex-column">
+            <div className="mb-3 dimension">
+              <NumberInput
+                inputProps={
+                  {
+                    disabled: !!volume || !!weight,
+                    max: isInKidney ? 70 : 20,
+                    required: true
+                  }
+                }
+                label={'длина'}
+                value={width}
+                onChange={val => handleFieldChange('width', val)}
+                errorText={width && width > (isInKidney ? 70 : 20) ? `Длина не более ${isInKidney ? 70 : 20}мм` : 'Введите число'}
+              />
+            </div>
+            <div className="mb-3 dimension">
+              <NumberInput
+                inputProps={
+                  {
+                    disabled: !!volume || !!weight,
+                    max: isInKidney ? 35 : 10,
+                    required: true
+                  }
+                }
+                label={'ширина'}
+                value={height}
+                onChange={val => handleFieldChange('height', val)}
+                errorText={height && height > (isInKidney ? 35 : 10) ? `Ширина не более ${isInKidney ? 35 : 10}мм` : 'Введите число'}
+              />
+            </div>
+            <div className="mb-3 dimension">
+              <NumberInput
+                inputProps={
+                  {
+                    disabled: !!volume || !!weight,
+                    max: isInKidney ? 35 : 10,
+                    required: true
+                  }
+                }
+                label={'толшина'}
+                value={depth}
+                onChange={val => handleFieldChange('depth', val)}
+                errorText={depth && depth > (isInKidney ? 35 : 10) ? `Толщина не более ${isInKidney ? 35 : 10}мм` : 'Введите число'}
+              />
+            </div>
           </div>
         </div>
         <div className='px-2 text-uppercase align-self-center'>
@@ -138,6 +174,13 @@ export const Home = observer(() => {
         </div>
         <div className="mb-3">
           <NumberInput
+            inputProps={
+              {
+                disabled: (!!width && !!height && !!depth) || !!weight,
+                max: 20,
+                required: true
+              }
+            }
             label={
               <div className='d-flex flex-row align-items-center'>
                 Объем, см<sup><small>3</small></sup>
@@ -152,11 +195,8 @@ export const Home = observer(() => {
               </div>
             }
             value={volume}
-            disabled={(!!width && !!height && !!depth) || !!weight}
             onChange={val => handleFieldChange('volume', val)}
-            isRequired={true}
-            maxValue={20}
-            errorText="Введите объем или укажите размеры конкремента"
+            errorText={volume && volume > 20 ? <span>Объем камня не должен превышать 20см<sup><small>3</small></sup></span> : "Введите объем или укажите размеры конкремента"}
           />
         </div>
       </div>
@@ -191,7 +231,14 @@ export const Home = observer(() => {
         <NumberInput
           disabled={!!weight || !!thickness}
           value={xrayThickness}
-          maxValue={3000}
+          inputProps={
+            {
+              id: 'xrayThickness',
+              disabled: !!weight || !!thickness,
+              max: 3000,
+              required: true
+            }
+          }
           label={
             <div className='d-flex flex-row align-items-center'>
               Рентгенологическая плотность, HU
@@ -206,8 +253,7 @@ export const Home = observer(() => {
             </div>
           }
           onChange={val => handleFieldChange('xrayThickness', val)}
-          isRequired={true}
-          errorText='Обязательное поле'
+          errorText={xrayThickness > 3000 ? 'Рентгенологическая плотность не может быть более 3000 HU' : 'Обязательное поле'}
         />
       </div>
     </>
@@ -405,6 +451,14 @@ export const Home = observer(() => {
             { renderThickness() }
             <div className="mb-3">
               <NumberInput
+                inputProps={
+                  {
+                    min: 0.2,
+                    max: 0.55,
+                    step: 0.00001,
+                    required: true
+                  }
+                }
                 value={massLoss}
                 onChange={val => handleFieldChange('massLoss', val)}
                 label={
@@ -420,10 +474,9 @@ export const Home = observer(() => {
                     </OverlayTrigger>
                   </div>
                 }
-                isRequired={true}
-                errorText='Обязательное поле'
-                minValue={0.2}
-                maxValue={0.55}
+                errorText={massLoss && massLoss < 0.2 ? 'Удельная величина потери массы камня не может быть менее 0.2 мг/Дж' :
+                  massLoss && massLoss > 0.55 ? 'Удельная величина потери массы камня не может быть более 0.55 мг/Дж' :
+                    'Обязательное поле'}
               />
             </div>
           </li>
@@ -446,7 +499,6 @@ export const Home = observer(() => {
         </ul>
         <div className="mt-3">
           <button
-            // disabled={formStore.isDisableButton}
             onClick={handleSubmit}
             type="submit"
             className="btn btn-primary"

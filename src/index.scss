@@ -39,6 +39,11 @@ code {
     max-width: 100%;
   }
 }
+@include media-breakpoint-up(md) {
+  .dimension {
+    width: 33%;
+  }
+}
 .questionIcon {
   margin-left: 5px;
   width: 14px;
@@ -48,4 +53,8 @@ code {
     display: flex;
     fill: #063BAE;
   }
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
 }

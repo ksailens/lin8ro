@@ -40,15 +40,6 @@ class FormStore {
     makeAutoObservable(this);
   }
 
-  get isDisableButton() {
-    const { width, height, depth, volume, xrayThickness,
-      fio, birthDate, operationDate, massLoss } = this.formParameters;
-    const hasVolume = (!!width && !!height && !!depth) || !!volume ;
-    const hasMassLoss = !!massLoss;
-
-    return !hasMassLoss || !fio || !birthDate || !operationDate || !xrayThickness || !hasVolume
-  }
-
   updateField(fieldName, value) {
     this.formParameters[fieldName] = value;
   }
