@@ -75,6 +75,7 @@ export const NumberInput = props => {
       <input
         {...inputProps}
         type="number"
+        onWheel={(e) => e.target.blur()}
         className={`form-control text-center ${isError ? 'is-invalid' : ''}`}
         onChange={handleChange}
         value={defaultValue}
