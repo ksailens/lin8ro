@@ -85,7 +85,7 @@ export const Records = observer(() => {
     if (error) {
       return (
         <div className="alert alert-danger" role="alert">
-          Упс! Что-то пошло не так...
+          Отсутствует связь с базой данных. Проверьте подключение к интернету
         </div>
       );
     }
@@ -116,7 +116,7 @@ export const Records = observer(() => {
   }
 
   const renderTable = () => {
-    if (data) {
+    if (data && data.length) {
       return (
         <div className='table-responsive'>
           <table className="table table-sm table-bordered align-middle">
@@ -206,6 +206,14 @@ export const Records = observer(() => {
         </div>
       );
     }
+
+    if (!error && data && !data.length) {
+      return (
+        <div className="alert alert-danger" role="alert">
+          Данные отсутствуют
+        </div>
+      )
+    }
     return null;
   }
 
@@ -224,12 +232,14 @@ export const Records = observer(() => {
           <div className="mb-3">
             <div className="input-group">
               <NumberInput
+                type='text'
                 label={'минуты'}
                 value={realOperationDuration.m}
                 isGrouped={true}
                 onChange={val => handleFieldChange('m', val)}
               />
               <NumberInput
+                type='text'
                 label={'секунды'}
                 value={realOperationDuration.s}
                 isGrouped={true}

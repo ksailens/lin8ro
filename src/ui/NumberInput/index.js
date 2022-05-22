@@ -13,6 +13,7 @@ export const NumberInput = props => {
     minValue,
     errorText,
     inputProps,
+    type = 'number'
   } = props;
 
   useEffect(() => {
@@ -65,6 +66,16 @@ export const NumberInput = props => {
     onChange && onChange(value);
   }
 
+  const handleOnInput = () => {
+    const input = document.getElementById(inputProps.id);
+    if (input) {
+      const validityState = input.validity;
+      if (validityState.badInput) {
+        input.classList.add('is-invalid');
+      }
+    }
+  }
+
   return (
     <>
       {
@@ -74,10 +85,11 @@ export const NumberInput = props => {
       }
       <input
         {...inputProps}
-        type="number"
+        type={isNegative ? 'text' : type}
         onWheel={(e) => e.target.blur()}
         className={`form-control text-center ${isError ? 'is-invalid' : ''}`}
         onChange={handleChange}
+        onInput={handleOnInput}
         value={defaultValue}
       />
       {!isGrouped && (<div className="invalid-feedback">
@@ -94,6 +106,7 @@ NumberInput.propTypes = {
   label: PropTypes.any,
   maxValue: PropTypes.number,
   minValue: PropTypes.number,
+  type: PropTypes.string,
   errorText: PropTypes.oneOfType([PropTypes.string, PropTypes.element]),
   inputProps: PropTypes.shape({
     required: PropTypes.bool,
@@ -109,4 +122,5 @@ NumberInput.defaultProps = {
   label: '',
   errorText: '',
   isGrouped: false,
+  inputProps: {}
 }

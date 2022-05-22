@@ -135,6 +135,8 @@ export const Home = observer(() => {
         input.classList.add('is-invalid');
       } else if (validityState.rangeUnderflow) {
         input.classList.add('is-invalid');
+      } else if (validityState.badInput) {
+        input.classList.add('is-invalid');
       } else if (validityState.rangeOverflow) {
         input.classList.add('is-invalid');
       } else {
@@ -212,13 +214,14 @@ export const Home = observer(() => {
                     disabled: !!volume || !!weight,
                     max: isInKidney ? 70 : 20,
                     required: true,
+                    min: 0,
                     id: 'width',
                   }
                 }
                 label={'длина'}
                 value={width}
                 onChange={val => handleFieldChange('width', val)}
-                errorText={width && width > (isInKidney ? 70 : 20) ? `Длина не более ${isInKidney ? 70 : 20}мм` : 'Введите число'}
+                errorText={width && width > (isInKidney ? 70 : 20) ? `Длина не более ${isInKidney ? 70 : 20}мм` : 'Введите положительное число'}
               />
             </div>
             <div className="mb-3 dimension">
@@ -228,13 +231,14 @@ export const Home = observer(() => {
                     disabled: !!volume || !!weight,
                     max: isInKidney ? 35 : 10,
                     required: true,
+                    min: 0,
                     id: 'height',
                   }
                 }
                 label={'ширина'}
                 value={height}
                 onChange={val => handleFieldChange('height', val)}
-                errorText={height && height > (isInKidney ? 35 : 10) ? `Ширина не более ${isInKidney ? 35 : 10}мм` : 'Введите число'}
+                errorText={height && height > (isInKidney ? 35 : 10) ? `Ширина не более ${isInKidney ? 35 : 10}мм` : 'Введите положительное число'}
               />
             </div>
             <div className="mb-3 dimension">
@@ -244,13 +248,14 @@ export const Home = observer(() => {
                     disabled: !!volume || !!weight,
                     max: isInKidney ? 35 : 10,
                     required: true,
+                    min: 0,
                     id: 'depth',
                   }
                 }
                 label={'толщина'}
                 value={depth}
                 onChange={val => handleFieldChange('depth', val)}
-                errorText={depth && depth > (isInKidney ? 35 : 10) ? `Толщина не более ${isInKidney ? 35 : 10}мм` : 'Введите число'}
+                errorText={depth && depth > (isInKidney ? 35 : 10) ? `Толщина не более ${isInKidney ? 35 : 10}мм` : 'Введите положительное число'}
               />
             </div>
           </div>
@@ -265,6 +270,7 @@ export const Home = observer(() => {
                 disabled: (!!width && !!height && !!depth) || !!weight,
                 max: 20,
                 required: true,
+                min: 0,
                 id: 'volume',
               }
             }
@@ -283,7 +289,7 @@ export const Home = observer(() => {
             }
             value={volume}
             onChange={val => handleFieldChange('volume', val)}
-            errorText={volume && volume > 20 ? <span>Объем камня не должен превышать 20см<sup><small>3</small></sup></span> : "Введите объем или укажите размеры конкремента"}
+            errorText={volume && volume > 20 ? <span>Объем камня не должен превышать 20см<sup><small>3</small></sup></span> : "Введите положительный объем или укажите размеры конкремента"}
           />
         </div>
       </div>
@@ -323,6 +329,7 @@ export const Home = observer(() => {
               id: 'xrayThickness',
               disabled: !!weight || !!thickness,
               max: 3000,
+              min: 0,
               required: true,
             }
           }
@@ -340,7 +347,7 @@ export const Home = observer(() => {
             </div>
           }
           onChange={val => handleFieldChange('xrayThickness', val)}
-          errorText={xrayThickness > 3000 ? 'Рентгенологическая плотность не может быть более 3000 HU' : 'Обязательное поле'}
+          errorText={xrayThickness > 3000 ? 'Рентгенологическая плотность не может быть более 3000 HU' : 'Обязательное поле. Не может быть отрицательным и нулем'}
         />
       </div>
     </>

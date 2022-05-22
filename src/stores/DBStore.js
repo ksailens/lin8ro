@@ -23,6 +23,9 @@ class DBStore {
   }
 
   setData(data) {
+    if (!data) {
+      return this.data = [];
+    }
     this.data = Object.keys(data).map(key => {
       return {
         id: key,
