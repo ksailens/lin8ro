@@ -12,21 +12,21 @@ export const Results = observer(() => {
     return (
       <table className="table table-striped">
         <tbody>
-          <tr className='text-decoration-underline'>
-            <td>Масса, мг</td>
-            <td>{weight}</td>
+          <tr>
+            <td className='text-decoration-underline'>Масса</td>
+            <td>{`${weight} мг`}</td>
           </tr>
-          <tr className='text-decoration-underline'>
-            <td>Плотность, г/см<sup><small>3</small></sup></td>
-            <td>{thickness}</td>
+          <tr>
+            <td className='text-decoration-underline'>Плотность</td>
+            <td>{thickness} г/см<sup><small>3</small></sup></td>
           </tr>
           <tr>
             <td className='text-decoration-underline'>T<sub>лит-чист</sub></td>
-            <td>{moment.duration(tLitChistoe, 'seconds').format('m [мин] s [сек]')}</td>
+            <td>{moment.duration(tLitChistoe * 1000, 'milliseconds').format('m [мин] s [с] S [мс]')}</td>
           </tr>
           <tr>
             <td className='text-decoration-underline'>Длительность литотрипсии</td>
-            <td>{moment.duration(operationDuration, 'seconds').format('m [мин] s [сек]')}</td>
+            <td>{moment.duration(operationDuration * 1000, 'milliseconds').format('m [мин] s [с] S [мс]')}</td>
           </tr>
         </tbody>
       </table>

@@ -67,17 +67,16 @@ class FormStore {
     if ([Systems.ureterMiddle, Systems.ureterTop, Systems.ureterBottom].includes(localization)) {
       const coefficients = currentCoefficients[localization];
       T1 = coefficients.q1 + coefficients.q2 * T2 + coefficients.q3 * localizationValue + coefficients.q4 * muddiness + coefficients.q5 * dustiness + coefficients.q6 * mobility;
-
     } else {
       const coefficients = currentCoefficients[localization];
       T1 = coefficients.q1 + coefficients.q2 * T2 + coefficients.q3 * localizationValue + coefficients.q4 * muddiness + coefficients.q5 * dustiness;
     }
 
     this.operationData = {
-      operationDuration: T1 > 0 ? round(T1, 1) : 6,
+      operationDuration: T1 > 0 ? round(T1, 2) : 6,
       thickness: round(calcThickness, 2),
       weight: round(calcMass, 2),
-      tLitChistoe: round(T2, 1)
+      tLitChistoe: round(T2, 2)
     }
     this.cloneInformation = {
       ...this.formParameters,

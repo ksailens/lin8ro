@@ -583,9 +583,9 @@ export const Home = observer(() => {
               <label className="fw-bold fs-4 form-label">Особенности операции</label>
             </div>
             <div className="d-flex justify-content-between flex-md-row flex-column">
-              { renderMobilityRadio() }
-              { renderDustinessRadio() }
               { renderMuddinessRadio() }
+              { renderDustinessRadio() }
+              { renderMobilityRadio() }
             </div>
           </li>
           <li className="list-group-item">
