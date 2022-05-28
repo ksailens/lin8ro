@@ -60,7 +60,7 @@ class FormStore {
     let calcThickness = 1.539 + 0.000485 * xrayThickness;
     let calcVolume = volume ? parseFloat(volume) : (width * height * depth * Math.PI * 0.167)/1000;
     let calcMass = calcThickness * calcVolume * 1000;
-    const localizationValue = [Systems.ureterMiddle, Systems.ureterTop, Systems.ureterBottom].includes(localization) ? -1 : 1;
+    const localizationValue = [Systems.ureterMiddle,  Systems.calyxMidBottom, Systems.calyxTop].includes(localization) ? -1 : 1;
 
     let T1;
     const T2 = calcMass / (massLoss * energy * frequency);
