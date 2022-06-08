@@ -5,6 +5,7 @@ import cloneDeep from "lodash/cloneDeep";
 import { Systems } from "../constants";
 
 const DEFAULT_COEFFICIENTS = {
+  // коэффициенты моделей для различны локализаций конкремента (названия в constants/index.js)
   [Systems.calyxTop]: {
     q1: 6.7371,
     q2: 2.2448,
@@ -75,6 +76,9 @@ class CoefficientStore {
     return isPersisting(this);
   }
 
+  /**
+   * определяем изменились ли коэффициенты
+   * */
   get isCoefficientsChanged() {
     const equals = {};
     forEach(Systems, one => {
@@ -87,6 +91,7 @@ class CoefficientStore {
     stopPersisting(this);
   }
 
+  /** сохранение изменений коэффициентов */
   setCurrentCoefficients(data, type) {
 
     const copyObj = {...data};
@@ -102,10 +107,16 @@ class CoefficientStore {
     this.currentCoefficients[type] = copyObj;
   }
 
+  /**
+   * сброс значений коэффициентов
+   * */
   resetCurrentCoefficients(type) {
     this.currentCoefficients[type] = { ...DEFAULT_COEFFICIENTS[type] };
   }
 
+  /**
+   * удаление предыдущих значений коэффициентов (история изменения)
+   * */
   resetPreviousCoefficients(type) {
     this.previousCoefficients[type] = {};
   }

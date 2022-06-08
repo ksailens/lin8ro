@@ -15,6 +15,9 @@ export const canUseDom = (() => !!(
     && window.document && window.document.createElement)
 ))() || false;
 
+/**
+ * главная страница с формой расчета длительности литотрипсии
+ * */
 export const Home = observer(() => {
   const { formStore } = useStores();
   const { formParameters } = formStore;
@@ -49,10 +52,9 @@ export const Home = observer(() => {
     };
   }, []);
 
-
+  /** валидация полей */
   const validate = () => {
     const forms = document.querySelectorAll('.needs-validation');
-    // Зацикливайтесь на них и предотвращайте отправку
     Array.prototype.slice.call(forms)
       .forEach(function (form) {
         form.addEventListener('submit', function (event) {
@@ -72,6 +74,27 @@ export const Home = observer(() => {
     }
   }
 
+  /** правила валидации */
+  const validateField = (fieldName) => {
+    const input = document.getElementById(fieldName);
+    if (input) {
+      const validityState = input.validity;
+
+      if (validityState.valueMissing) {
+        input.classList.add('is-invalid');
+      } else if (validityState.rangeUnderflow) {
+        input.classList.add('is-invalid');
+      } else if (validityState.badInput) {
+        input.classList.add('is-invalid');
+      } else if (validityState.rangeOverflow) {
+        input.classList.add('is-invalid');
+      } else {
+        input.classList.remove('is-invalid');
+      }
+    }
+  }
+
+  /** сброс валидации */
   const resetValidate = () => {
     const forms = document.querySelectorAll('.needs-validation');
     Array.prototype.slice.call(forms)
@@ -80,6 +103,7 @@ export const Home = observer(() => {
       })
   }
 
+  /** нажатие на кнопку "Рассчитать" */
   const handleSubmit = () => {
     validate();
   }
@@ -93,6 +117,7 @@ export const Home = observer(() => {
     }
   }
 
+  /** сброс формы */
   const handleResetForm = ev => {
     ev.preventDefault();
     Array.from(document.querySelectorAll('.is-invalid')).forEach((el) => el.classList.remove('is-invalid'));
@@ -100,6 +125,7 @@ export const Home = observer(() => {
     resetValidate();
   }
 
+  /** функция ввода данных всей формы */
   const handleSubmitForm = ev => {
     ev.preventDefault();
     ev.stopPropagation();
@@ -126,25 +152,6 @@ export const Home = observer(() => {
     }
   }
 
-  const validateField = (fieldName) => {
-    const input = document.getElementById(fieldName);
-    if (input) {
-      const validityState = input.validity;
-
-      if (validityState.valueMissing) {
-        input.classList.add('is-invalid');
-      } else if (validityState.rangeUnderflow) {
-        input.classList.add('is-invalid');
-      } else if (validityState.badInput) {
-        input.classList.add('is-invalid');
-      } else if (validityState.rangeOverflow) {
-        input.classList.add('is-invalid');
-      } else {
-        input.classList.remove('is-invalid');
-      }
-    }
-  }
-
   const handleFieldChange = (fieldName, value) => {
     validateField(fieldName, value);
     formStore.updateField(fieldName, value)
@@ -163,6 +170,7 @@ export const Home = observer(() => {
     </div>
   );
 
+  /** модальное окно ошибки валидации */
   const renderEditModal = () => {
     return (
       <Modal
@@ -187,6 +195,7 @@ export const Home = observer(() => {
 
   const isInKidney = [Systems.pelvis, Systems.calyxTop, Systems.calyxMidBottom].includes(localization);
 
+  /** блок с полями ввода размеров конкремента */
   const renderWeightVolumeDimensions = () => {
     return (
       <div className="d-flex justify-content-between flex-column">
@@ -212,9 +221,9 @@ export const Home = observer(() => {
                 inputProps={
                   {
                     disabled: !!volume || !!weight,
-                    max: isInKidney ? 70 : 20,
-                    required: true,
-                    min: 0,
+                    max: isInKidney ? 70 : 20, // верхняя граница в зависимости от положения конкремента
+                    required: true, // поле обязательное
+                    min: 0, // нижняя граница
                     id: 'width',
                   }
                 }
@@ -296,6 +305,7 @@ export const Home = observer(() => {
     );
   }
 
+  /** локализация конкремента */
   const renderLocalizationSelect = () => {
     const items = [
       { key: 'Лоханка', value: Systems.pelvis },
@@ -318,6 +328,7 @@ export const Home = observer(() => {
     )
   }
 
+  /** рентгенологическая плотность конкремента */
   const renderThickness = () => (
     <>
       <div className="mb-3">
@@ -353,6 +364,7 @@ export const Home = observer(() => {
     </>
   );
 
+  /** выбор энергии импульсов */
   const renderEnergySelect = () => {
     const items = [];
     for (let i = 0.1; i <= 6; i=round(i+0.1, 1)) {
@@ -373,6 +385,7 @@ export const Home = observer(() => {
     );
   }
 
+  /** выбор частоты импульсов */
   const renderFrequencySelect = () => {
     const items = [];
     for (let i = 1; i <= 20; i++) {
@@ -395,6 +408,7 @@ export const Home = observer(() => {
     );
   }
 
+  /** настройка видимости конкремента */
   const renderMuddinessRadio = () => {
     const items = [
       { key: 'нет замутнения', value: '-1' },
@@ -414,6 +428,7 @@ export const Home = observer(() => {
     );
   }
 
+  /** настройка пыльности конкремента */
   const renderDustinessRadio = () => {
     const items = [
       { key: 'непыльный', value: '-1' },
@@ -432,6 +447,7 @@ export const Home = observer(() => {
     );
   }
 
+  /** настройка подвижности конкремента */
   const renderMobilityRadio = () => {
     const items = [
       { key: 'нет', value: '-1' },
@@ -450,6 +466,7 @@ export const Home = observer(() => {
     );
   }
 
+  /** блок отображение компонента результатов вычислений */
   const renderResult = () => {
     return (
       <ul className="list-group rightBlock mt-md-0 mt-3">
@@ -463,6 +480,7 @@ export const Home = observer(() => {
     );
   }
 
+  /** блок ввода данных пациента */
   const patientData = () => {
     return (
       <div>
@@ -503,6 +521,7 @@ export const Home = observer(() => {
     )
   }
 
+  /** блок ввода параметров операции */
   const operationParameters = () => {
     return (
       <>
@@ -550,9 +569,9 @@ export const Home = observer(() => {
               <NumberInput
                 inputProps={
                   {
-                    min: 0.2,
-                    max: 0.55,
-                    step: 0.00001,
+                    min: 0.2, // нижняя граница
+                    max: 0.55, // верхняя граница
+                    step: 0.00001, // шаг - необходим для компонента
                     required: true,
                     id: "massLoss",
                   }

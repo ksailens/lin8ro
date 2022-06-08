@@ -4,6 +4,9 @@ import { useStores } from "../stores";
 import moment from "moment";
 import 'moment-duration-format';
 
+/**
+ * компонента отображения вычисляемых значений литотрипсии
+ * */
 export const Results = observer(() => {
   const { formStore } = useStores();
   const { cloneInformation, operationData } = formStore;

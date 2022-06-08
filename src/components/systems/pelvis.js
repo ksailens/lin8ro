@@ -6,6 +6,9 @@ import forEach from 'lodash/forEach';
 import isEmpty from 'lodash/isEmpty';
 import { Systems } from "../../constants";
 
+/**
+ * компонент редактирования и просмотра коэффициентов модели для лоханки почки
+ * */
 export const Pelvis = observer(() => {
   const { coefficientStore: { currentCoefficients, previousCoefficients }, coefficientStore } = useStores();
   const [coefficients, setCoefficients] = useState({...currentCoefficients});
@@ -24,24 +27,29 @@ export const Pelvis = observer(() => {
     },
     [coefficients, currentCoefficientsByType]);
 
+  /** изменение значения */
   const handleChangeValue = (index, val) => {
     const prevCoeff = {...coefficients};
     prevCoeff[index] = val;
     setCoefficients(prevCoeff);
   }
 
+  /** сохранение коэффициентов */
   function handleSaveCoefficients() {
     coefficientStore.setCurrentCoefficients(coefficients, Systems.pelvis);
   }
 
+  /** сброс до значений по умолчанию */
   function handleReset() {
     coefficientStore.resetCurrentCoefficients(Systems.pelvis);
   }
 
+  /** очистка истории */
   function handleResetPrevious() {
     coefficientStore.resetPreviousCoefficients(Systems.pelvis);
   }
 
+  /** поле ввода коэффициента Q1 */
   const renderQ1 = () => {
     return (
       <div className={'CoefficientInput m-1'}>
@@ -117,6 +125,7 @@ export const Pelvis = observer(() => {
     );
   }
 
+  /** блок истории изменения */
   const renderPreviousValues = () => {
     if (isEmpty(previousCoefficientsByType)) {
       return null;

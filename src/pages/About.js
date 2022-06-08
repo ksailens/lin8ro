@@ -8,7 +8,6 @@ export const About = () => {
         <p className="lead">Version 0.2</p>
         <p className="lead">Разработчики: Герцовская Карина Владиславовна, Чернега Виктор Степанович</p>
         <p className="lead">Севастопольский государственный университет</p>
-
       </div>
     </div>
   )

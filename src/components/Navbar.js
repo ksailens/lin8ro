@@ -1,6 +1,9 @@
 import React from "react";
 import {NavLink} from "react-router-dom";
 
+/**
+ * компонент главного меню с названием заголовков
+ * */
 export const Navbar = () => {
   return (
     <div className='bg-primary'>

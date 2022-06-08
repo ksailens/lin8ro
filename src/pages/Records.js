@@ -10,6 +10,9 @@ import 'moment-duration-format';
 
 const DEFAULT_TIME = { m: '', s: '' };
 
+/**
+ * компонент отображения записей операций
+ * */
 export const Records = observer(() => {
   const { dbStore } = useStores();
   const { data } = dbStore;
@@ -19,6 +22,9 @@ export const Records = observer(() => {
   const [id, setId] = useState('');
   const [realOperationDuration, setRealOperationDuration] = useState(DEFAULT_TIME);
 
+  /**
+   * получений данных об операциях
+   * */
   const getData = useCallback(() => {
     setPending(true);
     setError(false);
@@ -42,6 +48,7 @@ export const Records = observer(() => {
     getData();
   }
 
+  /** удаление записи */
   const handleDeleteNote = id => {
     dbStore.deleteOperation(id);
   }
@@ -68,6 +75,7 @@ export const Records = observer(() => {
     setShow(false);
   }
 
+  /** лоадер загрузки данных */
   const renderLoader = () => {
     if (pending) {
       return (
@@ -81,6 +89,7 @@ export const Records = observer(() => {
     return null;
   }
 
+  /** уведомление ошибки загрузки */
   const renderAlert = () => {
     if (error) {
       return (
@@ -99,6 +108,7 @@ export const Records = observer(() => {
     }));
   }
 
+  /** внесение изменений в запись */
   const handleSave = id => {
     handleCloseModal();
     const seconds = ((realOperationDuration.m || 0) * 60) + (realOperationDuration.s ? parseInt(realOperationDuration.s, 10) : 0);
@@ -108,6 +118,7 @@ export const Records = observer(() => {
       })
   }
 
+  /** расчет относительной погрешности на основе рассчитаного и фактического времени операции */
   const calculateAccuracy = (fake, real) => {
     if (real) {
       return round(Math.abs(fake - real) / real * 100, 2);
@@ -115,6 +126,7 @@ export const Records = observer(() => {
     return '';
   }
 
+  /** таблица записей */
   const renderTable = () => {
     if (data && data.length) {
       return (
@@ -217,6 +229,9 @@ export const Records = observer(() => {
     return null;
   }
 
+  /**
+   *  модальное окно ввода фактического времени операции
+   */
   const renderEditModal = () => {
     return (
       <Modal
