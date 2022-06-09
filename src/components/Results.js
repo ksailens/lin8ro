@@ -25,11 +25,11 @@ export const Results = observer(() => {
           </tr>
           <tr>
             <td className='text-decoration-underline'>T<sub>лит-чист</sub></td>
-            <td>{moment.duration(tLitChistoe * 1000, 'milliseconds').format('m [мин] s [с] S [мс]')}</td>
+            <td>{moment.duration(tLitChistoe, 'seconds').format('m [мин] s [с]')}</td>
           </tr>
           <tr>
             <td className='text-decoration-underline'>Длительность литотрипсии</td>
-            <td>{moment.duration(operationDuration * 1000, 'milliseconds').format('m [мин] s [с] S [мс]')}</td>
+            <td>{moment.duration(operationDuration, 'seconds').format('m [мин] s [с]')}</td>
           </tr>
         </tbody>
       </table>

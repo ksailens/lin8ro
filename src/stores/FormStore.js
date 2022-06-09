@@ -84,10 +84,10 @@ class FormStore {
 
     this.operationData = {
       // округляем результаты до двух знаков после запятой
-      operationDuration: T1 > 0 ? round(T1, 2) : 6,
+      operationDuration: T1 > 0 ? round(T1, 2) * 60 : 6,
       thickness: round(calcThickness, 2),
       weight: round(calcMass, 2),
-      tLitChistoe: round(T2, 2)
+      tLitChistoe: round(T2, 2) * 60
     }
     this.cloneInformation = {
       ...this.formParameters,
