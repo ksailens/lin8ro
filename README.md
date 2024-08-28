@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# Create React App
 
 как сделать релиз
 1. `yarn run build`
